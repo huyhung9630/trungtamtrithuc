@@ -102,6 +102,54 @@ def parse_pdf(path: Path) -> list[dict]:
     return pages
 
 
+def parse_xlsx(path: Path) -> str:
+    from openpyxl import load_workbook
+
+    wb = load_workbook(str(path), data_only=True)
+    parts: list[str] = []
+
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            continue
+
+        # Find header row (first row with 2+ non-empty cells)
+        header_idx = 0
+        headers: list[str] = []
+        for i, row in enumerate(rows):
+            non_empty = [c for c in row if c is not None and str(c).strip()]
+            if len(non_empty) >= 2:
+                headers = [str(c).strip() if c else f"Col{j+1}" for j, c in enumerate(row)]
+                header_idx = i
+                break
+
+        if len(wb.sheetnames) > 1:
+            parts.append(f"# Sheet: {sheet_name}")
+
+        if not headers:
+            # No header found, dump all non-empty rows as text
+            for row in rows:
+                line = " | ".join(str(c).strip() for c in row if c is not None and str(c).strip())
+                if line:
+                    parts.append(line)
+            continue
+
+        # Convert data rows to structured text
+        for row in rows[header_idx + 1:]:
+            cells = [str(c).strip() if c is not None else "" for c in row]
+            if not any(cells):
+                continue
+            row_parts: list[str] = []
+            for header, cell in zip(headers, cells):
+                if cell:
+                    row_parts.append(f"{header}: {cell}")
+            if row_parts:
+                parts.append("\n".join(row_parts))
+
+    return "\n\n".join(parts)
+
+
 def parse_docx(path: Path) -> str:
     from docx import Document  # type: ignore
 
@@ -140,6 +188,9 @@ def parse(path: Union[str, Path]) -> dict:
     elif suffix in (".docx", ".doc"):
         content = parse_docx(path)
         mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    elif suffix == ".xlsx":
+        content = parse_xlsx(path)
+        mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     elif suffix == ".md":
         content = parse_md(path)
         mime = "text/markdown"

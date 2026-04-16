@@ -124,12 +124,12 @@ def ingest_video_file(
     original_name: str,
     metadata: dict | None = None,
 ) -> IngestResult:
-    from app.ingestion.video_transcriber import WhisperTranscriber
+    from app.ingestion.video_transcriber import get_transcriber
 
     path = Path(local_path)
     logger.info("Transcribing local video: %s", original_name)
 
-    transcriber = WhisperTranscriber()
+    transcriber = get_transcriber()
     result = transcriber.transcribe(path)
     segments = result["segments"]
 

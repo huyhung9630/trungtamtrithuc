@@ -25,6 +25,9 @@ ANTHROPIC_API_KEY: str = _req("ANTHROPIC_API_KEY")
 CLAUDE_MODEL: str = _opt("CLAUDE_MODEL", "claude-sonnet-4-20250514")
 CLAUDE_HAIKU_MODEL: str = _opt("CLAUDE_HAIKU_MODEL", "claude-haiku-4-5-20251001")
 
+# --- Groq (Whisper API) ---
+GROQ_API_KEY: str = _opt("GROQ_API_KEY", "")
+
 # --- Embeddings (tất cả dùng voyage-3, 1024-dim) ---
 VOYAGE_API_KEY: str = _req("VOYAGE_API_KEY")
 VOYAGE_MODEL: str = _opt("VOYAGE_MODEL", "voyage-3")

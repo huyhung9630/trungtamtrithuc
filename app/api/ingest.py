@@ -36,11 +36,11 @@ async def ingest_file(
     collection: str = Form(default="ttt_documents"),
 ) -> IngestResponse:
     suffix = Path(file.filename).suffix.lower()
-    if suffix not in (".pdf", ".docx", ".doc", ".txt", ".md"):
+    if suffix not in (".pdf", ".docx", ".doc", ".txt", ".md", ".xlsx"):
         return IngestResponse(
             status="error",
             chunks_added=0,
-            message=f"Định dạng '{suffix}' không được hỗ trợ. Chỉ chấp nhận: PDF, DOCX, TXT, MD.",
+            message=f"Định dạng '{suffix}' không được hỗ trợ. Chỉ chấp nhận: PDF, DOCX, TXT, MD, XLSX.",
         )
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:

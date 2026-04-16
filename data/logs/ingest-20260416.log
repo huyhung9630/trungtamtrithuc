@@ -29,3 +29,39 @@
 2026-04-16 13:40:44,473 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
 2026-04-16 13:41:09,826 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
 2026-04-16 13:41:35,130 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 16:07:27,209 ERROR app.api.ingest Video ingest error for Tính năng cơ bản.mp4: Error code: 413 - {'error': {'message': 'Request Entity Too Large', 'type': 'invalid_request_error', 'code': 'request_too_large'}}
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/ingest.py", line 99, in ingest_video_file
+    result = _ingest_video(
+        local_path=tmp_path,
+        original_name=file.filename,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 133, in ingest_video_file
+    result = transcriber.transcribe(path)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_transcriber.py", line 38, in transcribe
+    result = client.audio.transcriptions.create(
+        file=(path.name, f),
+    ...<6 lines>...
+        ),
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/groq/resources/audio/transcriptions.py", line 233, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/openai/v1/audio/transcriptions",
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        cast_to=Transcription,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/groq/_base_client.py", line 1280, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/groq/_base_client.py", line 1067, in request
+    raise self._make_status_error_from_response(err.response) from None
+groq.APIStatusError: Error code: 413 - {'error': {'message': 'Request Entity Too Large', 'type': 'invalid_request_error', 'code': 'request_too_large'}}
+2026-04-16 16:24:08,078 INFO app.ingestion.doc_pipeline Ingesting document: 08. Quy cach dan tem san pham ong gio.xlsx
+2026-04-16 16:24:09,074 INFO app.core.voyage_embed voyage embed model=voyage-3 input_type=document texts=6 tokens=1919
+2026-04-16 16:24:09,075 INFO app.ingestion.doc_pipeline Page 1: 6 chunks
+2026-04-16 16:24:11,028 INFO app.core.qdrant_store qdrant upserted 6 points to 'ttt_documents'
+2026-04-16 16:24:11,029 INFO app.ingestion.doc_pipeline Ingested 08. Quy cach dan tem san pham ong gio.xlsx: doc_id=484fc526f010106e pages=1 chunks=6
