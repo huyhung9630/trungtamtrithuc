@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trung Tâm Tri Thức</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #1e40af;
+      --accent-hover: #1d3a9f;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --white: #ffffff;
+    }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      gap: 2rem;
+    }
+    .nav-brand { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-links { display: flex; gap: 0.25rem; margin-left: auto; }
+    .nav-link {
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--gray-600);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-link:hover, .nav-link.active { background: var(--gray-100); color: var(--accent); }
+    .hero {
+      max-width: 880px;
+      margin: 5rem auto 3rem;
+      padding: 0 2rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--gray-600);
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+    .cta-group { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+      border: 2px solid transparent;
+    }
+    .btn-primary { background: var(--accent); color: var(--white); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-outline { color: var(--accent); border-color: var(--accent); }
+    .btn-outline:hover { background: var(--accent); color: var(--white); }
+    .features {
+      max-width: 880px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .feature-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
+    .feature-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .feature-card p { font-size: 0.82rem; color: var(--gray-600); line-height: 1.55; }
+    footer { text-align: center; padding: 2rem; color: var(--gray-400); font-size: 0.8rem; border-top: 1px solid var(--gray-200); }
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.75rem; }
+      nav { padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-brand" href="index.html">Tri Thức</a>
+    <div class="nav-links">
+      <a class="nav-link active" href="index.html">Trang chủ</a>
+      <a class="nav-link" href="chat.html">Chat</a>
+      <a class="nav-link" href="ingest.html">Nạp dữ liệu</a>
+      <a class="nav-link" href="knowledge.html">Kho tri thức</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Hỏi đáp thông minh từ<br /><span>kho tri thức của bạn</span></h1>
+    <p>Nạp tài liệu hoặc video YouTube — rồi đặt câu hỏi và nhận câu trả lời chính xác kèm nguồn trích dẫn.</p>
+    <div class="cta-group">
+      <a class="btn btn-primary" href="chat.html">Bắt đầu trò chuyện</a>
+      <a class="btn btn-outline" href="ingest.html">Nạp dữ liệu</a>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>Tài liệu đa dạng</h3>
+      <p>Hỗ trợ PDF, DOCX, TXT, Markdown — tải lên và hệ thống tự phân tích, lập chỉ mục.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎬</div>
+      <h3>Video & YouTube</h3>
+      <p>Phiên âm bằng Whisper, lập chỉ mục theo timestamp để trích dẫn chính xác đến giây.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>RAG thông minh</h3>
+      <p>Trả lời dựa trên nội dung thực, kèm nguồn trích dẫn và mức độ tin cậy rõ ràng.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>Hội thoại liên tục</h3>
+      <p>Nhớ ngữ cảnh trong suốt phiên trò chuyện, hỗ trợ nhiều phiên độc lập.</p>
+    </div>
+  </div>
+
+  <footer>© 2026 Trung Tâm Tri Thức</footer>
+</body>
+</html>

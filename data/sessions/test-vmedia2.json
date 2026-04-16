@@ -1,0 +1,14 @@
+{
+  "session_id": "test-vmedia2",
+  "updated_at": 1776311364.785913,
+  "history": [
+    {
+      "role": "user",
+      "content": "thiết kế logo"
+    },
+    {
+      "role": "assistant",
+      "content": "Tôi không tìm thấy thông tin về thiết kế logo trong cơ sở tri thức hiện có. Các tài liệu được cung cấp chủ yếu tập trung vào hướng dẫn sử dụng Microsoft Outlook và các tính năng quản lý email, không bao gồm nội dung về thiết kế logo.\n\nNguồn: Không có thông tin liên quan trong cơ sở tri thức."
+    }
+  ]
+}

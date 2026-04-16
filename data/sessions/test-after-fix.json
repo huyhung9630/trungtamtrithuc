@@ -1,0 +1,14 @@
+{
+  "session_id": "test-after-fix",
+  "updated_at": 1776310352.074789,
+  "history": [
+    {
+      "role": "user",
+      "content": "Microsoft Teams là gì?"
+    },
+    {
+      "role": "assistant",
+      "content": "Dựa trên thông tin từ cơ sở tri thức, Microsoft Teams là một nền tảng giao tiếp và cộng tác tích hợp trong hệ sinh thái Microsoft 365 với các tính năng chính sau:\n\n## Định nghĩa và vai trò\nMicrosoft Teams là **trung tâm giao tiếp và cộng tác nội bộ** của tổ chức, không chỉ đơn thuần là công cụ nhắn tin và họp trực tuyến mà còn là nền tảng làm việc toàn diện.\n\n## Các tính năng chính\n\n### 1. Giao tiếp và trò chuyện\n- Nhắn tin cá nhân và theo nhóm\n- Tạo nhóm chat để thảo luận\n- Trao đổi công việc hiệu quả\n- Chat với chính mình để soạn thảo nháp và lưu trữ tài liệu cá nhân\n\n### 2. Họp trực tuyến và cuộc gọi\n- Tham gia họp trực tuyến\n- Gọi video\n- Quản lý lịch họp tích hợp\n- Tạo và gửi lời mời họp\n\n### 3. Chia sẻ và cộng tác\n- Chia sẻ file và tài liệu\n- Làm việc cùng đồng nghiệp trong từng phòng ban hoặc dự án\n- Đính kèm tệp từ đám mây hoặc thiết bị\n\n### 4. Tích hợp ứng dụng\n- Cho phép tích hợp nhiều ứng dụng hỗ trợ công việc hàng ngày\n- Thêm các ứng dụng như Planner, Form, OneNote\n- Ghim ứng dụng thường dùng vào thanh công cụ\n\n### 5. Quản lý lịch làm việc\n- Lịch tích hợp sẵn giúp sắp xếp công việc\n- Xem lịch theo ngày, tuần hoặc tháng\n- Đồng bộ với các cuộc họp và lời mời\n\nMicrosoft Teams hoạt động như một không gian làm việc số hóa, giúp các tổ chức tăng cường hiệu quả cộng tác và giao tiếp nội bộ.\n\n**Nguồn:** [NGUỒN 2] Thêm và sử dụng các ứng dụng khác vào Teams, [NGUỒN 3] Chat và trao đổi công việc, [NGUỒN 4] Tổng quan hệ thống làm việc, [NGUỒN 5] Sử dụng lịch và cuộc gọi trong Teams"
+    }
+  ]
+}

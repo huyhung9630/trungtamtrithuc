@@ -1,0 +1,14 @@
+{
+  "session_id": "verify-test",
+  "updated_at": 1776310128.265611,
+  "history": [
+    {
+      "role": "user",
+      "content": "Microsoft Teams là gì?"
+    },
+    {
+      "role": "assistant",
+      "content": "Dựa trên thông tin từ cơ sở tri thức, Microsoft Teams là một nền tảng giao tiếp và cộng tác tích hợp trong hệ sinh thái Microsoft 365 với các tính năng chính sau:\n\n## Định nghĩa và vai trò\nMicrosoft Teams là **trung tâm giao tiếp và cộng tác nội bộ** của tổ chức, không chỉ đơn thuần là công cụ nhắn tin và họp trực tuyến mà còn là nền tảng làm việc toàn diện.\n\n## Các tính năng chính\n\n### 1. Giao tiếp và nhắn tin\n- Nhắn tin cá nhân và theo nhóm\n- Trao đổi công việc hiệu quả\n- Chat với chính mình để soạn thảo nháp, lưu trữ tập tin cá nhân\n- Thêm tiêu đề và định dạng văn bản (code block)\n\n### 2. Họp trực tuyến và cuộc gọi\n- Tham gia họp trực tuyến\n- Gọi video\n- Quản lý lịch họp tích hợp\n- Tạo và gửi lời mời họp\n\n### 3. Cộng tác và chia sẻ\n- Chia sẻ file và tài liệu\n- Làm việc cùng đồng nghiệp trong từng phòng ban hoặc dự án\n- Đính kèm tệp từ đám mây hoặc thiết bị\n\n### 4. Tích hợp ứng dụng\n- Cho phép tích hợp nhiều ứng dụng hỗ trợ công việc (Planner, Forms, OneNote...)\n- Thêm ứng dụng vào nhóm hoặc kênh làm việc\n- Ghim ứng dụng thường dùng để truy cập nhanh\n\n### 5. Quản lý lịch\n- Lịch tích hợp sẵn giúp sắp xếp công việc\n- Xem lịch theo ngày, tuần, tháng\n- Đồng bộ với hệ thống email Outlook\n\n**Nguồn:** [NGUỒN 2], [NGUỒN 3], [NGUỒN 4], [NGUỒN 5]"
+    }
+  ]
+}

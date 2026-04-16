@@ -1,0 +1,14 @@
+{
+  "session_id": "test-ingest-verify",
+  "updated_at": 1776312293.365176,
+  "history": [
+    {
+      "role": "user",
+      "content": "chân dung đối tượng truyền thông nội bộ là gì?"
+    },
+    {
+      "role": "assistant",
+      "content": "Dựa trên thông tin trong cơ sở tri thức, chân dung đối tượng truyền thông nội bộ bao gồm:\n\n## Đối tượng chính:\n- **Nhân viên công ty nói chung**\n- **Nhân viên mới** - những người cần được cập nhật và làm quen với môi trường làm việc\n- **Nhân viên các phòng ban** - cần cập nhật thông tin nội bộ liên quan đến công việc\n\n## Đặc điểm nhân khẩu học:\n- **Độ tuổi**: 22-45 tuổi\n- **Trình độ học vấn**: Đại học trở lên\n\n## Nhu cầu thông tin:\n- Cập nhật thông tin công ty\n- Nắm bắt các chính sách mới\n- Hiểu rõ các quy trình làm việc\n\n## Kênh tiếp cận:\nĐối tượng này được tiếp cận thông qua các kênh truyền thông nội bộ như:\n- Email nội bộ\n- Microsoft Teams\n- Bảng tin điện tử  \n- Hệ thống intranet\n\nĐây là nhóm đối tượng có trình độ cao, trong độ tuổi lao động chính và có nhu cầu thường xuyên cập nhật thông tin để thực hiện tốt công việc.\n\n**Nguồn:** Không rõ nguồn — trang 1"
+    }
+  ]
+}

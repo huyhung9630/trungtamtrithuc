@@ -1,0 +1,14 @@
+{
+  "session_id": "test-title-fix",
+  "updated_at": 1776312325.500491,
+  "history": [
+    {
+      "role": "user",
+      "content": "chân dung đối tượng truyền thông nội bộ"
+    },
+    {
+      "role": "assistant",
+      "content": "Dựa trên thông tin từ cơ sở tri thức, chân dung đối tượng truyền thông nội bộ bao gồm:\n\n## Đối tượng chính\n**Nhân viên công ty, đặc biệt là nhân viên mới và nhân viên các phòng ban cần cập nhật thông tin nội bộ** (chan_dung_doi_tuong.md).\n\n## Đặc điểm nhân khẩu học\n- **Độ tuổi**: 22-45 tuổi\n- **Trình độ**: Đại học trở lên (chan_dung_doi_tuong.md)\n\n## Nhu cầu chính\n**Cập nhật thông tin công ty, chính sách, quy trình** (chan_dung_doi_tuong.md)\n\n## Kênh truyền thông được sử dụng\n- Email nội bộ\n- Microsoft Teams  \n- Bảng tin điện tử\n- Hệ thống intranet (chan_dung_doi_tuong.md)\n\nĐây là nhóm đối tượng có trình độ học vấn cao, trong độ tuổi lao động chính, có nhu cầu thường xuyên cập nhật thông tin để thực hiện công việc hiệu quả. Họ sử dụng đa dạng các kênh truyền thông số, đặc biệt là các công cụ công nghệ hiện đại như Microsoft Teams.\n\n**Nguồn:** chan_dung_doi_tuong.md"
+    }
+  ]
+}

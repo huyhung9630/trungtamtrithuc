@@ -1,0 +1,14 @@
+{
+  "session_id": "test-sources",
+  "updated_at": 1776310652.454081,
+  "history": [
+    {
+      "role": "user",
+      "content": "Làm thế nào để đồng bộ dữ liệu từ cloud về máy tính?"
+    },
+    {
+      "role": "assistant",
+      "content": "Để đồng bộ dữ liệu từ cloud về máy tính, bạn có thể thực hiện theo các bước sau:\n\n## Cài đặt ứng dụng OneDrive\n\n**Trên Windows 10 và 11:** OneDrive thường đã được cài đặt sẵn. Nếu chưa có, bạn cần:\n1. Truy cập OneDrive trên trình duyệt\n2. Chọn biểu tượng hình bánh răng ở góc trên bên phải\n3. Chọn \"tải về ứng dụng\"\n4. Chờ tệp tải xuống hoàn tất và kích đúp vào tệp để cài đặt\n\n## Thiết lập đồng bộ\n\n1. Sau khi cài đặt, OneDrive sẽ có biểu tượng hình đám mây xuất hiện dưới thanh điều khiển màn hình\n2. Nếu chưa thấy, nhấn phím tìm kiếm \"onedrive\" và mở ứng dụng\n3. Nhập tài khoản và mật khẩu của bạn\n4. Chọn vị trí lưu trữ dữ liệu trên máy tính - OneDrive sẽ hiển thị vị trí mặc định của thư mục đồng bộ\n5. Bạn có thể nhấn \"thay đổi vị trí\" nếu muốn lưu dữ liệu ở ổ đĩa khác\n6. Chờ một vài phút để hệ thống thực hiện sao lưu dữ liệu\n\n## Hiểu các biểu tượng trạng thái đồng bộ\n\nKhi xem các tệp trong thư mục, bạn sẽ thấy các biểu tượng nhỏ bên cạnh:\n\n- **Đám mây màu xanh lam:** Tệp chỉ có sẵn trực tuyến, không chiếm dung lượng ổ cứng và cần internet để mở\n- **Vòng tròn trắng viền xanh lục với dấu tích xanh:** Tệp đã được tải về máy khi bạn mở nó, có thể mở ngay cả khi không có mạng\n- **Vòng tròn xanh lục đậm với dấu tích trắng:** Tệp được đánh dấu luôn giữ trên thiết bị, luôn sẵn sàng ngoại tuyến và luôn chiếm dung lượng ổ cứng\n\nĐồng bộ hóa dữ liệu đám mây với máy tính cá nhân không chỉ giúp bạn truy cập tệp tin linh hoạt mọi lúc mọi nơi mà còn là phương án sao lưu dữ liệu cực kỳ hiệu quả. Mọi thay đổi bạn thực hiện trên máy tính sẽ tự động cập nhật lên đám mây và ngược lại (Đồng bộ dữ liệu từ cloud về máy tính cá nhân).\n\n**Nguồn:**\n- Đồng bộ dữ liệu từ cloud về máy tính cá nhân — https://www.youtube.com/watch?v=_32LCKb-5Eg"
+    }
+  ]
+}

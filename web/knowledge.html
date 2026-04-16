@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kho Tri Thức</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #1e40af;
+      --accent-hover: #1d3a9f;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --white: #ffffff;
+    }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-800);
+      min-height: 100vh;
+    }
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      gap: 2rem;
+    }
+    .nav-brand { font-size: 1.1rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+    .nav-links { display: flex; gap: 0.25rem; margin-left: auto; }
+    .nav-link {
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--gray-600);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-link:hover, .nav-link.active { background: var(--gray-100); color: var(--accent); }
+
+    .container {
+      max-width: 880px;
+      margin: 2.5rem auto;
+      padding: 0 2rem;
+    }
+    h1 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--gray-600); font-size: 0.95rem; margin-bottom: 2rem; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .stat-label { font-size: 0.78rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.05em; }
+    .stat-value { font-size: 1.75rem; font-weight: 800; color: var(--accent); margin-top: 0.25rem; }
+
+    .collection-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .collection-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .collection-name { font-weight: 700; font-size: 0.95rem; }
+    .collection-count { font-size: 0.85rem; color: var(--gray-600); }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+      background: #eff6ff;
+      color: var(--accent);
+    }
+
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--gray-400);
+    }
+    .empty .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    .loading { text-align: center; padding: 2rem; color: var(--gray-400); font-size: 0.9rem; }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .container { padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-brand" href="index.html">Tri Thức</a>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">Trang chủ</a>
+      <a class="nav-link" href="chat.html">Chat</a>
+      <a class="nav-link" href="ingest.html">Nạp dữ liệu</a>
+      <a class="nav-link active" href="knowledge.html">Kho tri thức</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Kho Tri Thức</h1>
+    <p class="subtitle">Tổng quan các collection dữ liệu đã nạp vào hệ thống.</p>
+
+    <div class="stats" id="stats">
+      <div class="loading">Đang tải...</div>
+    </div>
+
+    <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;">Collections</h2>
+    <div class="collection-list" id="collections">
+      <div class="loading">Đang tải...</div>
+    </div>
+  </div>
+
+  <script>
+    async function load() {
+      const statsEl = document.getElementById('stats');
+      const colsEl = document.getElementById('collections');
+
+      try {
+        const resp = await fetch('/health');
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+
+        const collections = data.collections || {};
+        const names = Object.keys(collections);
+        const totalPoints = names.reduce((sum, k) => sum + (collections[k]?.points || 0), 0);
+
+        statsEl.innerHTML = `
+          <div class="stat-card">
+            <div class="stat-label">Collections</div>
+            <div class="stat-value">${names.length}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Tổng điểm dữ liệu</div>
+            <div class="stat-value">${totalPoints.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Model</div>
+            <div class="stat-value" style="font-size:1rem;">${data.model || '—'}</div>
+          </div>
+        `;
+
+        if (names.length === 0) {
+          colsEl.innerHTML = `<div class="empty"><div class="icon">📭</div><p>Chưa có collection nào. Hãy nạp dữ liệu trước.</p></div>`;
+          return;
+        }
+
+        colsEl.innerHTML = names.map(name => {
+          const pts = collections[name]?.points || 0;
+          return `
+            <div class="collection-card">
+              <div>
+                <div class="collection-name">${name}</div>
+                <div class="collection-count">${pts.toLocaleString()} điểm dữ liệu</div>
+              </div>
+              <span class="badge">${pts > 0 ? 'Active' : 'Empty'}</span>
+            </div>`;
+        }).join('');
+      } catch (err) {
+        statsEl.innerHTML = '';
+        colsEl.innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>Không kết nối được server. ${err.message}</p></div>`;
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>

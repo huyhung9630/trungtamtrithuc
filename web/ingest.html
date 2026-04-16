@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nạp dữ liệu – Tri Thức</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #1e40af;
+      --accent-hover: #1d3a9f;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --white: #ffffff;
+      --success: #16a34a;
+      --error: #dc2626;
+    }
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+    nav {
+      background: var(--white); border-bottom: 1px solid var(--gray-200);
+      padding: 0 1.5rem; display: flex; align-items: center; height: 56px; gap: 1.5rem;
+    }
+    .nav-brand { font-size: 1rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+    .nav-links { display: flex; gap: 0.25rem; margin-left: auto; }
+    .nav-link {
+      padding: 0.4rem 0.875rem; border-radius: 6px; text-decoration: none;
+      color: var(--gray-600); font-size: 0.875rem; font-weight: 500; transition: background 0.15s, color 0.15s;
+    }
+    .nav-link:hover, .nav-link.active { background: var(--gray-100); color: var(--accent); }
+
+    .page { max-width: 840px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .page-title { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.35rem; }
+    .page-sub { color: var(--gray-600); font-size: 0.875rem; margin-bottom: 2rem; }
+
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem; }
+
+    .card {
+      background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 14px;
+      padding: 1.75rem; display: flex; flex-direction: column; gap: 0.875rem;
+    }
+    .card-icon { font-size: 1.75rem; }
+    .card-title { font-size: 0.95rem; font-weight: 700; }
+    .card-desc { font-size: 0.8rem; color: var(--gray-600); line-height: 1.55; }
+
+    .dropzone {
+      border: 2px dashed var(--gray-200); border-radius: 10px; padding: 1.25rem 1rem;
+      text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      font-size: 0.82rem; color: var(--gray-600);
+    }
+    .dropzone.dragover { border-color: var(--accent); background: #eff6ff; }
+    .dropzone input[type=file] { display: none; }
+    .selected-file { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-top: 0.3rem; }
+
+    .url-input {
+      width: 100%; padding: 0.6rem 0.875rem;
+      border: 1.5px solid var(--gray-200); border-radius: 8px;
+      font-size: 0.875rem; color: var(--gray-800); outline: none;
+      font-family: inherit; transition: border 0.15s;
+    }
+    .url-input:focus { border-color: var(--accent); }
+
+    .btn-submit {
+      padding: 0.625rem 1.25rem; background: var(--accent); color: var(--white);
+      border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; width: 100%; transition: background 0.15s; font-family: inherit;
+    }
+    .btn-submit:hover { background: var(--accent-hover); }
+    .btn-submit:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+
+    .result-msg {
+      font-size: 0.8rem; min-height: 1.2rem; padding: 0.1rem 0;
+    }
+    .result-msg.ok  { color: var(--success); }
+    .result-msg.err { color: var(--error); }
+    .result-msg.pending { color: var(--gray-600); }
+
+    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav>
+    <a class="nav-brand" href="index.html">Tri Thức</a>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">Trang chủ</a>
+      <a class="nav-link" href="chat.html">Chat</a>
+      <a class="nav-link active" href="ingest.html">Nạp dữ liệu</a>
+      <a class="nav-link" href="knowledge.html">Kho tri thức</a>
+    </div>
+  </nav>
+
+  <div class="page">
+    <h1 class="page-title">Nạp dữ liệu</h1>
+    <p class="page-sub">Thêm tài liệu hoặc video YouTube vào kho tri thức.</p>
+
+    <div class="cards">
+      <!-- Card 1: Upload tài liệu -->
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <div>
+          <div class="card-title">Tải tài liệu</div>
+          <div class="card-desc">Hỗ trợ PDF, DOCX, TXT, Markdown. Tối đa 50 MB mỗi file.</div>
+        </div>
+        <label class="dropzone" id="docDropzone">
+          <input type="file" id="docFile" accept=".pdf,.docx,.txt,.md" />
+          <div>📁 Kéo thả hoặc <strong>click để chọn file</strong></div>
+          <div class="selected-file" id="docFileName"></div>
+        </label>
+        <div class="result-msg" id="docResult"></div>
+        <button class="btn-submit" id="docSubmit" disabled>Tải lên & Lập chỉ mục</button>
+      </div>
+
+      <!-- Card 2: Upload video -->
+      <div class="card">
+        <div class="card-icon">🎬</div>
+        <div>
+          <div class="card-title">Tải video</div>
+          <div class="card-desc">MP4, MKV, AVI, MOV. Whisper sẽ phiên âm tự động với timestamp.</div>
+        </div>
+        <label class="dropzone" id="vidDropzone">
+          <input type="file" id="vidFile" accept="video/*" />
+          <div>🎥 Kéo thả hoặc <strong>click để chọn video</strong></div>
+          <div class="selected-file" id="vidFileName"></div>
+        </label>
+        <div class="result-msg" id="vidResult"></div>
+        <button class="btn-submit" id="vidSubmit" disabled>Tải lên & Phiên âm</button>
+      </div>
+
+      <!-- Card 3: YouTube URL -->
+      <div class="card">
+        <div class="card-icon">▶️</div>
+        <div>
+          <div class="card-title">URL YouTube</div>
+          <div class="card-desc">Dán link YouTube để phiên âm và lập chỉ mục theo timestamp.</div>
+        </div>
+        <input class="url-input" type="url" id="ytUrl" placeholder="https://www.youtube.com/watch?v=..." />
+        <div class="result-msg" id="ytResult"></div>
+        <button class="btn-submit" id="ytSubmit">Thêm & Phiên âm</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    const API_BASE = '';
+
+    function setupDropzone(zoneId, inputId, nameId, submitId) {
+      const zone = document.getElementById(zoneId);
+      const inp  = document.getElementById(inputId);
+      const nameEl = document.getElementById(nameId);
+      const btn  = document.getElementById(submitId);
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) { inp.files = e.dataTransfer.files; nameEl.textContent = e.dataTransfer.files[0].name; btn.disabled = false; }
+      });
+      inp.addEventListener('change', () => { if (inp.files[0]) { nameEl.textContent = inp.files[0].name; btn.disabled = false; } });
+    }
+    setupDropzone('docDropzone', 'docFile', 'docFileName', 'docSubmit');
+    setupDropzone('vidDropzone', 'vidFile', 'vidFileName', 'vidSubmit');
+
+    function setResult(id, text, type) {
+      const el = document.getElementById(id);
+      el.textContent = text;
+      el.className = 'result-msg ' + (type || '');
+    }
+
+    async function uploadFile(fileInputId, endpoint, collection, resultId, btnId) {
+      const file = document.getElementById(fileInputId).files[0];
+      if (!file) return;
+      const btn = document.getElementById(btnId);
+      btn.disabled = true;
+      setResult(resultId, 'Đang tải lên...', 'pending');
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('collection', collection);
+      try {
+        const resp = await fetch(`${API_BASE}${endpoint}`, { method: 'POST', body: fd });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        setResult(resultId, data.message + (data.chunks_added ? ` (${data.chunks_added} đoạn)` : ''), 'ok');
+      } catch (err) {
+        setResult(resultId, `Lỗi: ${err.message}`, 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById('docSubmit').addEventListener('click', () =>
+      uploadFile('docFile', '/api/ingest/file', 'ttt_documents', 'docResult', 'docSubmit'));
+
+    document.getElementById('vidSubmit').addEventListener('click', () =>
+      uploadFile('vidFile', '/api/ingest/file', 'ttt_videos', 'vidResult', 'vidSubmit'));
+
+    document.getElementById('ytSubmit').addEventListener('click', async () => {
+      const url = document.getElementById('ytUrl').value.trim();
+      if (!url) { setResult('ytResult', 'Vui lòng nhập URL YouTube.', 'err'); return; }
+      const btn = document.getElementById('ytSubmit');
+      btn.disabled = true;
+      setResult('ytResult', 'Đang gửi yêu cầu...', 'pending');
+      try {
+        const resp = await fetch(`${API_BASE}/api/ingest/youtube?url=${encodeURIComponent(url)}`, { method: 'POST' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        setResult('ytResult', data.message, 'ok');
+        document.getElementById('ytUrl').value = '';
+      } catch (err) {
+        setResult('ytResult', `Lỗi: ${err.message}`, 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
