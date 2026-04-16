@@ -44,8 +44,8 @@ COLLECTION_VIDEOS: str = _opt("COLLECTION_VIDEOS", "ttt_videos")
 VMEDIA_COLLECTIONS: list[str] = _opt("VMEDIA_COLLECTIONS", "vmedia_content,vmedia_design,vmedia_digital,vmedia_documents,vmedia_fonts,vmedia_image,vmedia_media,vmedia_qa,vmedia_ttnb").split(",")
 
 # --- Chunking ---
-CHUNK_MAX_TOKENS: int = int(_opt("CHUNK_MAX_TOKENS", "700"))
-CHUNK_OVERLAP_TOKENS: int = int(_opt("CHUNK_OVERLAP_TOKENS", "80"))
+CHUNK_MAX_TOKENS: int = int(_opt("CHUNK_MAX_TOKENS", "500"))
+CHUNK_OVERLAP_TOKENS: int = int(_opt("CHUNK_OVERLAP_TOKENS", "50"))
 
 # --- Retrieval ---
 TOP_K: int = int(_opt("TOP_K", "7"))

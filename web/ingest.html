@@ -193,7 +193,7 @@
       uploadFile('docFile', '/api/ingest/file', 'ttt_documents', 'docResult', 'docSubmit'));
 
     document.getElementById('vidSubmit').addEventListener('click', () =>
-      uploadFile('vidFile', '/api/ingest/file', 'ttt_videos', 'vidResult', 'vidSubmit'));
+      uploadFile('vidFile', '/api/ingest/video/file', 'ttt_videos', 'vidResult', 'vidSubmit'));
 
     document.getElementById('ytSubmit').addEventListener('click', async () => {
       const url = document.getElementById('ytUrl').value.trim();

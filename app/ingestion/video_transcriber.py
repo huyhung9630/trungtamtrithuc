@@ -1,13 +1,30 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+
+def _detect_device() -> str:
+    try:
+        import torch
+        if torch.cuda.is_available():
+            logger.info("Whisper sử dụng CUDA GPU")
+            return "cuda"
+        # MPS (Apple Silicon) gây hallucination/lặp với Whisper, không dùng
+    except Exception:
+        pass
+    logger.info("Whisper sử dụng CPU")
+    return "cpu"
 
 
 class WhisperTranscriber:
-    def __init__(self, model_name: str = "base", language: str = "vi"):
+    def __init__(self, model_name: str = "medium", language: str = "vi"):
         self.model_name = model_name
         self.language = language
         self._model = None
+        self._device = _detect_device()
 
     def _load_model(self):
         if self._model is not None:
@@ -18,15 +35,19 @@ class WhisperTranscriber:
             raise ImportError(
                 "openai-whisper is not installed. Run: pip install openai-whisper"
             )
-        self._model = whisper.load_model(self.model_name)
+        self._model = whisper.load_model(self.model_name, device=self._device)
+        logger.info("Loaded Whisper model '%s' on %s", self.model_name, self._device)
         return self._model
 
     def transcribe(self, path: str | Path) -> dict:
         model = self._load_model()
+        # MPS với fp16 gây lặp/hallucination, chỉ dùng fp16 cho CUDA
+        fp16 = self._device == "cuda"
         result = model.transcribe(
             str(path),
             verbose=False,
             language=self.language,
+            fp16=fp16,
             initial_prompt=(
                 "Đây là video tiếng Việt có dấu đầy đủ. "
                 "Vui lòng ghi chính xác dấu thanh và dấu mũ tiếng Việt."

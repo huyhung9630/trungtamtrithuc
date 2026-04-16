@@ -14,6 +14,20 @@ from app.core.qdrant_store import QdrantStore
 logger = logging.getLogger(__name__)
 
 
+def format_transcript_string(segments: list[dict]) -> str:
+    """Convert segments to timestamped string: '00:00 text 00:07 more text'."""
+    parts: list[str] = []
+    for seg in segments:
+        secs = int(seg.get("start", 0))
+        mm, ss = divmod(secs, 60)
+        hh, mm = divmod(mm, 60)
+        ts = f"{hh:02d}:{mm:02d}:{ss:02d}" if hh else f"{mm:02d}:{ss:02d}"
+        text = seg.get("text", "").strip()
+        if text:
+            parts.append(f"{ts} {text}")
+    return " ".join(parts)
+
+
 @dataclass
 class IngestResult:
     doc_id: str
@@ -72,6 +86,8 @@ def _upsert_video_chunks(
     for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
         start_sec = chunk["start"]
         end_sec = chunk["end"]
+        ts_start = int(start_sec)
+        mm, ss = divmod(ts_start, 60)
         point_id = str(uuid.uuid5(
             uuid.NAMESPACE_DNS,
             f"{video_id}-{i}",
@@ -83,6 +99,7 @@ def _upsert_video_chunks(
             "source_url": source_url,
             "start_sec": start_sec,
             "end_sec": end_sec,
+            "timestamp": f"{mm:02d}:{ss:02d}",
             "text": chunk["text"],
             "segment_ids": chunk.get("segment_ids", []),
             "uploaded_at": uploaded_at,

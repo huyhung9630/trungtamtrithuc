@@ -1,6 +1,6 @@
 {
   "session_id": "2b4118da-d5c2-45b0-8552-ecdaa38c21b3",
-  "updated_at": 1776312681.39246,
+  "updated_at": 1776322590.765447,
   "history": [
     {
       "role": "user",
@@ -25,6 +25,22 @@
     {
       "role": "assistant",
       "content": "Theo tài liệu về chuẩn hóa chân dung đối tượng truyền thông nội bộ, mục tiêu bao gồm:\n\n## **Các mục tiêu chính:**\n\n1. **Hiểu rõ đặc điểm nhân sự nội bộ theo từng nhóm** - Nắm bắt được đặc thù của từng bộ phận trong tổ chức\n\n2. **Xác định hành vi tiếp nhận thông tin và kênh truyền thông phù hợp** - Tìm hiểu cách mỗi nhóm nhân sự tiếp cận và sử dụng thông tin\n\n3. **Tránh tình trạng một nội dung nhưng truyền thông không chạm đúng người** - Đảm bảo thông tin được truyền đạt hiệu quả đến đúng đối tượng mục tiêu\n\n4. **Là cơ sở để xây dựng chiến lược truyền thông nội bộ dài hạn của TDI** - Tạo nền tảng cho việc phát triển hệ thống truyền thông bền vững\n\nĐiều này giúp TDI có thể truyền thông hiệu quả hơn với các nhóm nhân sự khác nhau (Khối Văn phòng, Ban chỉ huy công trình, và Công nhân cơ hữu) thông qua các kênh phù hợp như MS Teams, Group Facebook, và Site nội bộ.\n\n**Nguồn:** CHÂN DUNG ĐỐI TƯỢNG TRUYỀN THÔNG NỘI BỘ"
+    },
+    {
+      "role": "user",
+      "content": "quy trình sản xuất ống gió vuông gồm những bước nào"
+    },
+    {
+      "role": "assistant",
+      "content": "Dựa trên tài liệu quy trình sản xuất, quy trình sản xuất ống gió vuông gồm các bước sau:\n\n## **Các bước trong quy trình sản xuất ống gió vuông:**\n\n### **1. Nạp và kéo nguyên liệu**\n- Cuộn tôn được nạp vào máy sản xuất ống gió vuông (máy có thể chứa tới 5 tấn nguyên liệu)\n- Nâng và đưa vào trục đỡ\n- Hệ thống 2 rolo của máy thực hiện kéo và tháo nguyên liệu từ cuộn tôn ra\n\n### **2. Nắn thẳng và tạo gân tăng cứng**\n- 3 rolo khác của máy làm nhiệm vụ nắn thẳng bề mặt tôn\n- Sau khi có tấm tôn bằng phẳng, 2 rolo của máy sẽ cán gân tăng cứng để tạo đường gân\n- Tôn sẽ được tạo rãnh gân dạng vuông\n- Công đoạn này giúp ống gió có độ cứng cao hơn và khó bị bóp méo khi đã ra thành phẩm\n\n### **3. Gập thành ống (công đoạn cuối cùng)**\n- Vật liệu được cố định bằng hệ thống tay robot được lập trình sẵn\n- Robot đẩy vật liệu vào máy gập theo những kích thước đã được cài đặt sẵn\n- Tạo thành ống gió với kích thước theo yêu cầu của đơn hàng sản xuất\n- Sau quá trình này, sản phẩm ống gió cơ bản được hoàn thành\n\n**Nguồn:** Quy trinh sx ong gio.docx"
+    },
+    {
+      "role": "user",
+      "content": "tôi muốn cài authen cho microsoft teams thì sao"
+    },
+    {
+      "role": "assistant",
+      "content": "Dựa trên hướng dẫn trong cơ sở tri thức, để cài đặt xác thực cho Microsoft Teams, bạn cần thực hiện các bước sau:\n\n## **Bước 1: Tải ứng dụng Microsoft Authenticator**\n- Mở **App Store** (iOS) hoặc **Google Play** (Android)\n- Tìm kiếm \"**Microsoft Authenticator**\"\n- Tải về và cài đặt ứng dụng\n- Mở ứng dụng và chọn **Chấp nhận**, sau đó nhấn **Tiếp tục**\n\n## **Bước 2: Đăng nhập Office 365**\n- Truy cập **office.com** trên trình duyệt\n- Chọn **Đăng nhập**\n- Nhập **tài khoản email và mật khẩu** mà công ty đã cung cấp\n- Khi hệ thống nhắc \"giữ an toàn cho tài khoản\", chọn **Tiếp tục**\n\n## **Bước 3: Thiết lập xác thực**\n- Hệ thống yêu cầu cài đặt Authenticator, chọn **Tiếp tục** hai lần\n- Khi hiển thị **mã QR** trên màn hình máy tính:\n  - Mở ứng dụng Authenticator trên điện thoại\n  - Chọn biểu tượng **mã QR** và quét mã trên màn hình\n  - Tài khoản sẽ được thêm vào ứng dụng\n\n## **Bước 4: Xác thực hoàn tất**\n- Quay lại trình duyệt, chọn **Tiếp theo**\n- Nhập số ngẫu nhiên hiển thị trên màn hình vào ứng dụng Authenticator\n- Khi Authenticator hiển thị \"**đã chấp thuận**\", bạn đã xác thực thành công\n\n**Nguồn:** Hướng dẫn tải ứng dụng Authenticator bật xác thực đa lớp"
     }
   ]
 }

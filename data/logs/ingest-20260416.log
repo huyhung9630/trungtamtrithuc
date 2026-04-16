@@ -1,0 +1,31 @@
+2026-04-16 13:28:38,372 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:29:03,662 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:29:28,963 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:29:56,339 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:30:22,000 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:30:47,304 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:31:13,996 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:31:39,297 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:32:04,575 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:32:31,065 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:32:56,369 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:33:21,667 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:33:48,126 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:34:13,451 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:35:48,632 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:38:15,602 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:38:15,604 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:38:15,695 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:38:15,696 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:38:19,776 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:38:45,441 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:39:10,777 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:39:49,914 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:39:49,916 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:39:50,006 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:39:50,007 WARNING pdfminer.pdffont Could not get FontBBox from font descriptor because None cannot be parsed as 4 floats
+2026-04-16 13:39:52,723 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:40:18,046 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:40:44,473 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:41:09,826 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-16 13:41:35,130 WARNING app.core.voyage_embed voyage retry 3/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
