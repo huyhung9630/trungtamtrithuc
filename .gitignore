@@ -1,1 +1,5 @@
 .env
+.omc
+__pycache__
+.claude
+FD-EI60.pdf

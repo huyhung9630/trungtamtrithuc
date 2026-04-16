@@ -9,6 +9,8 @@ requests
 qdrant-client>=1.11.0
 voyageai
 pdfplumber
+pytesseract
+pdf2image
 python-docx
 openpyxl
 pandas
