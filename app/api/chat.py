@@ -18,7 +18,7 @@ from app.core.voyage_embed import VoyageEmbedder
 from app.core.qdrant_store import QdrantStore, VMediaReadOnlyStore
 from app.core.session_memory import memory
 from app.rag.retriever import Retriever
-from app.rag.reranker import ScoreReranker
+from app.rag.reranker import CrossEncoderReranker
 from app.rag.chain import RAGChain
 
 logger = logging.getLogger(__name__)
@@ -55,14 +55,14 @@ def _get_chain() -> RAGChain:
         qdrant_videos=qdrant_videos,
         vmedia_store=vmedia_store,
     )
-    reranker = ScoreReranker()
+    reranker = CrossEncoderReranker()
 
     _chain = RAGChain(
         retriever=retriever,
         reranker=reranker,
         claude=claude,
-        top_k=TOP_K,
-        rerank_top_k=RERANK_TOP_K,
+        top_k=10,
+        rerank_top_k=3,
     )
     return _chain
 

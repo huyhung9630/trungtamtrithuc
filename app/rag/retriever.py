@@ -36,9 +36,10 @@ class Retriever:
         source_type: str,
         query_vec: list[float],
         top_k: int,
+        qdrant_filter: dict | None = None,
     ) -> list[Hit]:
         try:
-            hits = store.search(query_vec, limit=top_k)
+            hits = store.search(query_vec, limit=top_k, filter=qdrant_filter)
             col = getattr(store, "collection", "vmedia")
             return [
                 Hit(
@@ -56,21 +57,33 @@ class Retriever:
     def retrieve(
         self,
         query: str,
-        top_k: int = 7,
+        top_k: int = 10,
         sources: list[str] | None = None,
+        domain_filter: str | None = None,
     ) -> list[Hit]:
         if sources is None:
-            sources = ["documents", "videos", "vmedia"]
+            sources = ["documents", "videos"]
 
         query_vec = self.voyage.embed_query(query)
 
+        # Build Qdrant filter for domain if specified
+        qdrant_filter = None
+        if domain_filter:
+            qdrant_filter = {
+                "should": [
+                    {"key": "domain", "match": {"value": domain_filter}},
+                    # Also match docs without domain field (backward compat)
+                    {"is_empty": {"key": "domain"}},
+                ]
+            }
+
         tasks: list[tuple] = []
         if "documents" in sources:
-            tasks.append((self.qdrant_docs, "document", query_vec, top_k))
+            tasks.append((self.qdrant_docs, "document", query_vec, top_k, qdrant_filter))
         if "videos" in sources:
-            tasks.append((self.qdrant_videos, "video", query_vec, top_k))
+            tasks.append((self.qdrant_videos, "video", query_vec, top_k, qdrant_filter))
         if "vmedia" in sources and self.vmedia_store.api_key:
-            tasks.append((self.vmedia_store, "vmedia", query_vec, top_k))
+            tasks.append((self.vmedia_store, "vmedia", query_vec, top_k, None))
 
         all_hits: list[Hit] = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=3) as ex:

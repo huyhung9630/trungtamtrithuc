@@ -7,7 +7,7 @@ import re
 
 from app.core.claude_client import ClaudeClient
 from app.rag.retriever import Retriever
-from app.rag.reranker import ScoreReranker
+from app.rag.reranker import CrossEncoderReranker
 from app.rag.prompt_builder import build_system_prompt, build_context_block
 
 _SUGGESTION_PATTERN = re.compile(
@@ -43,10 +43,10 @@ class RAGChain:
     def __init__(
         self,
         retriever: Retriever,
-        reranker: ScoreReranker,
+        reranker: CrossEncoderReranker,
         claude: ClaudeClient,
-        top_k: int = 7,
-        rerank_top_k: int = 5,
+        top_k: int = 10,
+        rerank_top_k: int = 3,
     ):
         self.retriever = retriever
         self.reranker = reranker
@@ -61,7 +61,10 @@ class RAGChain:
         expert_domain: str | None = None,
         sources_filter: list[str] | None = None,
     ) -> dict[str, Any]:
-        hits = self.retriever.retrieve(query, top_k=self.top_k, sources=sources_filter)
+        hits = self.retriever.retrieve(
+            query, top_k=self.top_k, sources=sources_filter,
+            domain_filter=expert_domain,
+        )
         hits = self.reranker.rerank(query, hits, top_k=self.rerank_top_k)
 
         system_prompt = build_system_prompt(expert_domain)

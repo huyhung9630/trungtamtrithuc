@@ -318,7 +318,18 @@ def ingest_document(
             }
             if table_data and i == 0:
                 payload["table_data"] = table_data
+            # Store searchable metadata fields at top level
             if metadata:
+                if metadata.get("domain"):
+                    payload["domain"] = metadata["domain"]
+                if metadata.get("title"):
+                    payload["title"] = metadata["title"]
+                if metadata.get("description"):
+                    payload["description"] = metadata["description"]
+                if metadata.get("tags"):
+                    payload["tags"] = metadata["tags"]
+                if metadata.get("url"):
+                    payload["url"] = metadata["url"]
                 payload["extra_metadata"] = metadata
             all_points.append({"id": point_id, "vector": vector, "payload": payload})
             chunk_index += 1

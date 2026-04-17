@@ -14,6 +14,7 @@
       --gray-200: #e5e7eb;
       --gray-400: #9ca3af;
       --gray-600: #4b5563;
+      --gray-700: #374151;
       --gray-800: #1f2937;
       --white: #ffffff;
       --success: #16a34a;
@@ -32,53 +33,80 @@
     }
     .nav-link:hover, .nav-link.active { background: var(--gray-100); color: var(--accent); }
 
-    .page { max-width: 840px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    .page { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
     .page-title { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.35rem; }
     .page-sub { color: var(--gray-600); font-size: 0.875rem; margin-bottom: 2rem; }
 
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem; }
-
-    .card {
+    .form-card {
       background: var(--white); border: 1.5px solid var(--gray-200); border-radius: 14px;
-      padding: 1.75rem; display: flex; flex-direction: column; gap: 0.875rem;
+      padding: 2rem; display: flex; flex-direction: column; gap: 1.25rem;
     }
-    .card-icon { font-size: 1.75rem; }
-    .card-title { font-size: 0.95rem; font-weight: 700; }
-    .card-desc { font-size: 0.8rem; color: var(--gray-600); line-height: 1.55; }
 
     .dropzone {
-      border: 2px dashed var(--gray-200); border-radius: 10px; padding: 1.25rem 1rem;
+      border: 2px dashed var(--gray-200); border-radius: 12px; padding: 2rem 1.5rem;
       text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s;
-      font-size: 0.82rem; color: var(--gray-600);
+      color: var(--gray-600);
     }
     .dropzone.dragover { border-color: var(--accent); background: #eff6ff; }
     .dropzone input[type=file] { display: none; }
-    .selected-file { font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-top: 0.3rem; }
+    .dropzone-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .dropzone-text { font-size: 0.875rem; }
+    .dropzone-hint { font-size: 0.75rem; color: var(--gray-400); margin-top: 0.35rem; }
+    .selected-file { font-size: 0.82rem; color: var(--accent); font-weight: 600; margin-top: 0.4rem; }
 
-    .url-input {
+    .form-label { font-size: 0.82rem; font-weight: 600; color: var(--gray-700); margin-bottom: 0.25rem; }
+    .form-label .required { color: var(--error); }
+
+    .form-input {
       width: 100%; padding: 0.6rem 0.875rem;
       border: 1.5px solid var(--gray-200); border-radius: 8px;
       font-size: 0.875rem; color: var(--gray-800); outline: none;
       font-family: inherit; transition: border 0.15s;
     }
-    .url-input:focus { border-color: var(--accent); }
+    .form-input:focus { border-color: var(--accent); }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; }
+
+    .form-select {
+      width: 100%; padding: 0.6rem 0.875rem;
+      border: 1.5px solid var(--gray-200); border-radius: 8px;
+      font-size: 0.875rem; color: var(--gray-800); background: var(--white);
+      outline: none; cursor: pointer; font-family: inherit; transition: border 0.15s;
+    }
+    .form-select:focus { border-color: var(--accent); }
+
+    .divider { border: none; border-top: 1px solid var(--gray-200); margin: 0.25rem 0; }
 
     .btn-submit {
-      padding: 0.625rem 1.25rem; background: var(--accent); color: var(--white);
-      border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+      padding: 0.75rem 1.5rem; background: var(--accent); color: var(--white);
+      border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
       cursor: pointer; width: 100%; transition: background 0.15s; font-family: inherit;
     }
     .btn-submit:hover { background: var(--accent-hover); }
     .btn-submit:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
 
-    .result-msg {
-      font-size: 0.8rem; min-height: 1.2rem; padding: 0.1rem 0;
-    }
+    .result-msg { font-size: 0.82rem; min-height: 1.4rem; padding: 0.3rem 0; text-align: center; }
     .result-msg.ok  { color: var(--success); }
     .result-msg.err { color: var(--error); }
     .result-msg.pending { color: var(--gray-600); }
 
-    @media (max-width: 600px) { .cards { grid-template-columns: 1fr; } }
+    .section-title { font-size: 0.95rem; font-weight: 700; color: var(--gray-800); }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 1.5rem; }
+    .tab {
+      padding: 0.6rem 1.25rem; font-size: 0.875rem; font-weight: 600;
+      color: var(--gray-400); cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; transition: color 0.15s, border-color 0.15s;
+    }
+    .tab:hover { color: var(--gray-600); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -93,50 +121,133 @@
   </nav>
 
   <div class="page">
-    <h1 class="page-title">Nạp dữ liệu</h1>
-    <p class="page-sub">Thêm tài liệu hoặc video YouTube vào kho tri thức.</p>
+    <h1 class="page-title">Tải lên Tri thức</h1>
+    <p class="page-sub">Chia sẻ tài liệu, video và liên kết với tổ chức của bạn.</p>
 
-    <div class="cards">
-      <!-- Card 1: Upload tài liệu -->
-      <div class="card">
-        <div class="card-icon">📄</div>
-        <div>
-          <div class="card-title">Tải tài liệu</div>
-          <div class="card-desc">Hỗ trợ PDF, DOCX, XLSX, TXT, Markdown. Tối đa 50 MB mỗi file.</div>
-        </div>
+    <div class="tabs">
+      <div class="tab active" data-tab="doc">Tài liệu</div>
+      <div class="tab" data-tab="video">Video</div>
+      <div class="tab" data-tab="youtube">YouTube</div>
+    </div>
+
+    <!-- Tab: Tài liệu -->
+    <div class="tab-content active" id="tab-doc">
+      <div class="form-card">
         <label class="dropzone" id="docDropzone">
-          <input type="file" id="docFile" accept=".pdf,.docx,.txt,.md,.xlsx" />
-          <div>📁 Kéo thả hoặc <strong>click để chọn file</strong></div>
+          <input type="file" id="docFile" accept=".pdf,.docx,.doc,.txt,.md,.xlsx,.pptx" />
+          <div class="dropzone-icon">&#x2B06;&#xFE0F;</div>
+          <div class="dropzone-text">Thả tệp của bạn vào đây</div>
+          <div class="dropzone-hint">hoặc nhấp để duyệt từ máy tính</div>
+          <div class="dropzone-hint">Hỗ trợ: PDF, Word, Excel, PowerPoint, TXT, Markdown</div>
           <div class="selected-file" id="docFileName"></div>
         </label>
+
+        <div class="form-group">
+          <label class="form-label">Tiêu đề <span class="required">*</span></label>
+          <input class="form-input" type="text" id="docTitle" placeholder="Nhập tiêu đề tài liệu" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Lĩnh vực</label>
+            <select class="form-select" id="docDomain">
+              <option value="">Chọn lĩnh vực</option>
+              <option value="bim">BIM</option>
+              <option value="mep">MEP</option>
+              <option value="kết cấu">Kết cấu</option>
+              <option value="marketing">Marketing</option>
+              <option value="pháp lý">Pháp lý</option>
+              <option value="sản xuất">Sản xuất</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Loại tệp</label>
+            <select class="form-select" id="docType" disabled>
+              <option value="">Tự nhận diện</option>
+              <option value="pdf">PDF</option>
+              <option value="docx">Word</option>
+              <option value="xlsx">Excel</option>
+              <option value="txt">TXT</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mô tả</label>
+          <textarea class="form-input" id="docDesc" placeholder="Mô tả ngắn gọn về nội dung này"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Thẻ</label>
+          <input class="form-input" type="text" id="docTags" placeholder="Nhập thẻ phân cách bằng dấu phẩy (ví dụ: marketing, chiến dịch, Q2)" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">URL (tùy chọn)</label>
+          <input class="form-input" type="url" id="docUrl" placeholder="https://example.com/tai-lieu" />
+        </div>
+
         <div class="result-msg" id="docResult"></div>
         <button class="btn-submit" id="docSubmit" disabled>Tải lên & Lập chỉ mục</button>
       </div>
+    </div>
 
-      <!-- Card 2: Upload video -->
-      <div class="card">
-        <div class="card-icon">🎬</div>
-        <div>
-          <div class="card-title">Tải video</div>
-          <div class="card-desc">MP4, MKV, AVI, MOV. Whisper sẽ phiên âm tự động với timestamp.</div>
-        </div>
+    <!-- Tab: Video -->
+    <div class="tab-content" id="tab-video">
+      <div class="form-card">
         <label class="dropzone" id="vidDropzone">
           <input type="file" id="vidFile" accept="video/*" />
-          <div>🎥 Kéo thả hoặc <strong>click để chọn video</strong></div>
+          <div class="dropzone-icon">&#x1F3AC;</div>
+          <div class="dropzone-text">Thả video vào đây</div>
+          <div class="dropzone-hint">MP4, MKV, AVI, MOV. Whisper sẽ phiên âm tự động.</div>
           <div class="selected-file" id="vidFileName"></div>
         </label>
+
+        <div class="form-group">
+          <label class="form-label">Tiêu đề</label>
+          <input class="form-input" type="text" id="vidTitle" placeholder="Tên video" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lĩnh vực</label>
+          <select class="form-select" id="vidDomain">
+            <option value="">Chọn lĩnh vực</option>
+            <option value="bim">BIM</option>
+            <option value="mep">MEP</option>
+            <option value="kết cấu">Kết cấu</option>
+            <option value="marketing">Marketing</option>
+            <option value="pháp lý">Pháp lý</option>
+            <option value="sản xuất">Sản xuất</option>
+          </select>
+        </div>
+
         <div class="result-msg" id="vidResult"></div>
         <button class="btn-submit" id="vidSubmit" disabled>Tải lên & Phiên âm</button>
       </div>
+    </div>
 
-      <!-- Card 3: YouTube URL -->
-      <div class="card">
-        <div class="card-icon">▶️</div>
-        <div>
-          <div class="card-title">URL YouTube</div>
-          <div class="card-desc">Dán link video hoặc playlist YouTube. Playlist sẽ tự động nạp từng video.</div>
+    <!-- Tab: YouTube -->
+    <div class="tab-content" id="tab-youtube">
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label">URL YouTube <span class="required">*</span></label>
+          <input class="form-input" type="url" id="ytUrl" placeholder="https://www.youtube.com/watch?v=... hoặc playlist?list=..." />
+          <div class="dropzone-hint" style="margin-top:0.35rem">Hỗ trợ video đơn và playlist. Playlist sẽ tự động nạp từng video.</div>
         </div>
-        <input class="url-input" type="url" id="ytUrl" placeholder="https://www.youtube.com/watch?v=... hoặc playlist?list=..." />
+
+        <div class="form-group">
+          <label class="form-label">Lĩnh vực</label>
+          <select class="form-select" id="ytDomain">
+            <option value="">Chọn lĩnh vực</option>
+            <option value="bim">BIM</option>
+            <option value="mep">MEP</option>
+            <option value="kết cấu">Kết cấu</option>
+            <option value="marketing">Marketing</option>
+            <option value="pháp lý">Pháp lý</option>
+            <option value="sản xuất">Sản xuất</option>
+          </select>
+        </div>
+
         <div class="result-msg" id="ytResult"></div>
         <button class="btn-submit" id="ytSubmit">Thêm & Phiên âm</button>
       </div>
@@ -146,18 +257,39 @@
   <script type="module">
     const API_BASE = '';
 
+    // --- Tabs ---
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // --- Dropzone ---
     function setupDropzone(zoneId, inputId, nameId, submitId) {
       const zone = document.getElementById(zoneId);
-      const inp  = document.getElementById(inputId);
+      const inp = document.getElementById(inputId);
       const nameEl = document.getElementById(nameId);
-      const btn  = document.getElementById(submitId);
+      const btn = document.getElementById(submitId);
       zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
       zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
       zone.addEventListener('drop', e => {
         e.preventDefault(); zone.classList.remove('dragover');
         if (e.dataTransfer.files[0]) { inp.files = e.dataTransfer.files; nameEl.textContent = e.dataTransfer.files[0].name; btn.disabled = false; }
       });
-      inp.addEventListener('change', () => { if (inp.files[0]) { nameEl.textContent = inp.files[0].name; btn.disabled = false; } });
+      inp.addEventListener('change', () => {
+        if (inp.files[0]) {
+          nameEl.textContent = inp.files[0].name;
+          btn.disabled = false;
+          // Auto-fill title if empty
+          const titleInput = document.getElementById(zoneId === 'docDropzone' ? 'docTitle' : 'vidTitle');
+          if (titleInput && !titleInput.value) {
+            titleInput.value = inp.files[0].name.replace(/\.[^.]+$/, '');
+          }
+        }
+      });
     }
     setupDropzone('docDropzone', 'docFile', 'docFileName', 'docSubmit');
     setupDropzone('vidDropzone', 'vidFile', 'vidFileName', 'vidSubmit');
@@ -168,45 +300,72 @@
       el.className = 'result-msg ' + (type || '');
     }
 
-    async function uploadFile(fileInputId, endpoint, collection, resultId, btnId) {
-      const file = document.getElementById(fileInputId).files[0];
+    // --- Upload document ---
+    document.getElementById('docSubmit').addEventListener('click', async () => {
+      const file = document.getElementById('docFile').files[0];
       if (!file) return;
-      const btn = document.getElementById(btnId);
+      const btn = document.getElementById('docSubmit');
       btn.disabled = true;
-      setResult(resultId, 'Đang tải lên...', 'pending');
+      setResult('docResult', 'Đang tải lên và lập chỉ mục...', 'pending');
+
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('collection', collection);
+      fd.append('collection', 'ttt_documents');
+      fd.append('title', document.getElementById('docTitle').value);
+      fd.append('domain', document.getElementById('docDomain').value);
+      fd.append('description', document.getElementById('docDesc').value);
+      fd.append('tags', document.getElementById('docTags').value);
+      fd.append('url', document.getElementById('docUrl').value);
+
       try {
-        const resp = await fetch(`${API_BASE}${endpoint}`, { method: 'POST', body: fd });
+        const resp = await fetch(`${API_BASE}/api/ingest/file`, { method: 'POST', body: fd });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
-        setResult(resultId, data.message + (data.chunks_added ? ` (${data.chunks_added} đoạn)` : ''), 'ok');
+        setResult('docResult', data.message, data.status === 'ok' ? 'ok' : 'err');
       } catch (err) {
-        setResult(resultId, `Lỗi: ${err.message}`, 'err');
+        setResult('docResult', `Lỗi: ${err.message}`, 'err');
       } finally {
         btn.disabled = false;
       }
-    }
+    });
 
-    document.getElementById('docSubmit').addEventListener('click', () =>
-      uploadFile('docFile', '/api/ingest/file', 'ttt_documents', 'docResult', 'docSubmit'));
+    // --- Upload video ---
+    document.getElementById('vidSubmit').addEventListener('click', async () => {
+      const file = document.getElementById('vidFile').files[0];
+      if (!file) return;
+      const btn = document.getElementById('vidSubmit');
+      btn.disabled = true;
+      setResult('vidResult', 'Đang tải lên và phiên âm... (có thể mất vài phút)', 'pending');
 
-    document.getElementById('vidSubmit').addEventListener('click', () =>
-      uploadFile('vidFile', '/api/ingest/video/file', 'ttt_videos', 'vidResult', 'vidSubmit'));
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('collection', 'ttt_videos');
 
+      try {
+        const resp = await fetch(`${API_BASE}/api/ingest/video/file`, { method: 'POST', body: fd });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        setResult('vidResult', data.message, data.status === 'ok' ? 'ok' : 'err');
+      } catch (err) {
+        setResult('vidResult', `Lỗi: ${err.message}`, 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // --- YouTube ---
     document.getElementById('ytSubmit').addEventListener('click', async () => {
       const url = document.getElementById('ytUrl').value.trim();
       if (!url) { setResult('ytResult', 'Vui lòng nhập URL YouTube.', 'err'); return; }
       const btn = document.getElementById('ytSubmit');
       btn.disabled = true;
-      setResult('ytResult', 'Đang gửi yêu cầu...', 'pending');
+      setResult('ytResult', 'Đang xử lý...', 'pending');
       try {
         const resp = await fetch(`${API_BASE}/api/ingest/youtube?url=${encodeURIComponent(url)}`, { method: 'POST' });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
-        setResult('ytResult', data.message, 'ok');
-        document.getElementById('ytUrl').value = '';
+        setResult('ytResult', data.message, data.status === 'ok' ? 'ok' : 'err');
+        if (data.status === 'ok') document.getElementById('ytUrl').value = '';
       } catch (err) {
         setResult('ytResult', `Lỗi: ${err.message}`, 'err');
       } finally {

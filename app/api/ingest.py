@@ -34,6 +34,11 @@ except Exception as exc:
 async def ingest_file(
     file: UploadFile = File(...),
     collection: str = Form(default="ttt_documents"),
+    title: str = Form(default=""),
+    domain: str = Form(default=""),
+    description: str = Form(default=""),
+    tags: str = Form(default=""),
+    url: str = Form(default=""),
 ) -> IngestResponse:
     suffix = Path(file.filename).suffix.lower()
     if suffix not in (".pdf", ".docx", ".doc", ".txt", ".md", ".xlsx"):
@@ -48,10 +53,24 @@ async def ingest_file(
         tmp.write(content)
         tmp_path = tmp.name
 
+    # Build metadata from form fields
+    meta = {}
+    if title.strip():
+        meta["title"] = title.strip()
+    if domain.strip():
+        meta["domain"] = domain.strip()
+    if description.strip():
+        meta["description"] = description.strip()
+    if tags.strip():
+        meta["tags"] = [t.strip() for t in tags.split(",") if t.strip()]
+    if url.strip():
+        meta["url"] = url.strip()
+
     try:
         result = ingest_document(
             file_path=tmp_path,
-            original_name=file.filename,
+            original_name=title.strip() or file.filename,
+            metadata=meta if meta else None,
         )
         return IngestResponse(
             status="ok",

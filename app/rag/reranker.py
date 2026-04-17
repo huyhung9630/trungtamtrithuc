@@ -1,37 +1,57 @@
 from __future__ import annotations
 
 import logging
-import re
-from collections import Counter
+from typing import Any
 
 from app.rag.retriever import Hit
 
 logger = logging.getLogger(__name__)
 
-
-def _tokenize(text: str) -> list[str]:
-    return re.findall(r'\w+', text.lower())
+_cross_encoder = None
 
 
-def _keyword_overlap_score(query: str, text: str) -> float:
-    q_tokens = Counter(_tokenize(query))
-    t_tokens = set(_tokenize(text))
-    if not q_tokens:
-        return 0.0
-    overlap = sum(1 for t in q_tokens if t in t_tokens)
-    return overlap / len(q_tokens)
+def _get_cross_encoder():
+    """Lazy-load cross-encoder model (cached after first call)."""
+    global _cross_encoder
+    if _cross_encoder is not None:
+        return _cross_encoder
+    from sentence_transformers import CrossEncoder
+    model_name = "BAAI/bge-reranker-v2-m3"
+    logger.info("Loading cross-encoder: %s", model_name)
+    _cross_encoder = CrossEncoder(model_name)
+    logger.info("Cross-encoder loaded")
+    return _cross_encoder
 
 
-class ScoreReranker:
-    """Rule-based reranker — NO Claude API calls. Uses cosine score + keyword overlap."""
+class CrossEncoderReranker:
+    """Cross-encoder reranker using BAAI/bge-reranker-v2-m3.
 
-    def rerank(self, query: str, hits: list[Hit], top_k: int = 5) -> list[Hit]:
+    Scores each (query, document) pair for semantic relevance.
+    Filters out chunks below the relevance threshold.
+    """
+
+    def __init__(self, min_score: float = 0.1):
+        self.min_score = min_score
+
+    def rerank(self, query: str, hits: list[Hit], top_k: int = 3) -> list[Hit]:
         if not hits:
             return hits
 
-        for h in hits:
-            keyword_bonus = _keyword_overlap_score(query, h.text) * 0.15
-            h.score = h.score + keyword_bonus
+        model = _get_cross_encoder()
 
-        hits.sort(key=lambda h: h.score, reverse=True)
-        return hits[:top_k]
+        pairs = [[query, h.text] for h in hits]
+        scores = model.predict(pairs)
+
+        for h, score in zip(hits, scores):
+            h.score = float(score)
+
+        # Filter out irrelevant chunks
+        relevant = [h for h in hits if h.score >= self.min_score]
+
+        if not relevant:
+            # Fallback: keep best hit even if below threshold
+            hits.sort(key=lambda h: h.score, reverse=True)
+            return hits[:1]
+
+        relevant.sort(key=lambda h: h.score, reverse=True)
+        return relevant[:top_k]

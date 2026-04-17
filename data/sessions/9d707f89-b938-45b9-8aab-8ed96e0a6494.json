@@ -1,14 +1,14 @@
 {
   "session_id": "9d707f89-b938-45b9-8aab-8ed96e0a6494",
-  "updated_at": 1776395905.476495,
+  "updated_at": 1776399488.913549,
   "history": [
     {
       "role": "user",
-      "content": "hi"
+      "content": "bạn có những tri thức nào"
     },
     {
       "role": "assistant",
-      "content": "Xin chào! Tôi là trợ lý AI của bạn. Tôi có thể giúp bạn tra cứu thông tin và trả lời các câu hỏi. Bạn cần hỗ trợ gì hôm nay?"
+      "content": "Xin chào! Tôi là trợ lý tri thức chuyên nghiệp, rất vui được hỗ trợ bạn.\n\nHiện tại tôi có thể truy cập vào cơ sở tri thức về **Công ty Cổ phần Vật tư Alpha** - một đơn vị chuyên nhập khẩu và phân phối vật tư phụ, phụ kiện cho ngành xây dựng và công nghiệp.\n\nTôi có thể giúp bạn tìm hiểu về:\n- Thông tin tổng quan về công ty Alpha\n- Danh mục sản phẩm và dịch vụ\n- Thông tin liên hệ và địa chỉ kho hàng\n- Các chính sách và cam kết của công ty\n\nBạn có muốn tìm hiểu điều gì cụ thể về Alpha không? Tôi sẵn sàng hỗ trợ bạn!"
     }
   ]
 }

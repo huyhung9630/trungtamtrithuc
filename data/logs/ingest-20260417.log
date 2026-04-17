@@ -156,3 +156,13 @@ Traceback (most recent call last):
   File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1137, in request
     raise self._make_status_error_from_response(err.response) from None
 anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8Z5KmVmAs4ceti8W5tU'}
+2026-04-17 11:14:32,539 WARNING huggingface_hub.utils._http Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-04-17 11:15:01,924 ERROR app.core.qdrant_store qdrant POST /collections/ttt_documents/points/delete -> 400: {"status":{"error":"Bad request: Index required but not found for \"doc_id\" of one of the following types: [keyword]. Help: Create an index for this key or use a different filter."},"time":0.000017986}
+2026-04-17 11:15:01,926 WARNING app.ingestion.doc_pipeline Could not delete old chunks for doc_id=dfd57310825c02ff
+2026-04-17 11:21:56,363 WARNING huggingface_hub.utils._http Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-04-17 11:29:14,903 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 11:29:40,246 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 11:30:20,216 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 11:30:45,587 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 11:31:23,756 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 11:31:49,037 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
