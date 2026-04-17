@@ -101,6 +101,61 @@ def build_system_prompt(expert_domain: str | None = None) -> str:
     return base + _BASE_SUFFIX
 
 
+MEMORY_CATEGORY_LABELS = {
+    "persistent": "Hồ sơ",
+    "preference": "Sở thích/cách trả lời",
+    "contextual": "Đang quan tâm",
+}
+
+
+def build_memory_block(memories: list) -> str:
+    """Build memory block tu danh sach MemoryRecord cho LLM context.
+
+    Tach summary va entity records. Group entity theo category.
+    """
+    if not memories:
+        return ""
+
+    summaries: list[str] = []
+    grouped: dict[str, list[str]] = {}
+
+    for m in memories:
+        cat = getattr(m, "category", "contextual")
+        text = getattr(m, "text", str(m))
+        if cat == "summary":
+            summaries.append(text)
+        else:
+            if cat not in grouped:
+                grouped[cat] = []
+            grouped[cat].append(text)
+
+    if not summaries and not grouped:
+        return ""
+
+    lines: list[str] = []
+
+    # Summary truoc (context conversation truoc do)
+    if summaries:
+        lines.append("## Tóm tắt cuộc trò chuyện trước:\n")
+        for s in summaries:
+            lines.append(s)
+        lines.append("")
+
+    # Entity records
+    if grouped:
+        lines.append("## Thông tin đã biết về user:\n")
+        for cat in ["persistent", "preference", "contextual"]:
+            if cat not in grouped:
+                continue
+            label = MEMORY_CATEGORY_LABELS.get(cat, cat)
+            lines.append(f"**{label}:**")
+            for text in grouped[cat]:
+                lines.append(f"- {text}")
+            lines.append("")
+
+    return "\n".join(lines)
+
+
 def _parse_timestamp(ts) -> tuple[int | None, str | None]:
     """Parse timestamp to (seconds, 'MM:SS' string)."""
     if ts is None:

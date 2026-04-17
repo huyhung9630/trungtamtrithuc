@@ -24,11 +24,13 @@ class Retriever:
         qdrant_docs: QdrantStore,
         qdrant_videos: QdrantStore,
         vmedia_store: VMediaReadOnlyStore,
+        entity_memory=None,
     ):
         self.voyage = voyage
         self.qdrant_docs = qdrant_docs
         self.qdrant_videos = qdrant_videos
         self.vmedia_store = vmedia_store
+        self.entity_memory = entity_memory
 
     def _search_one(
         self,
@@ -101,3 +103,48 @@ class Retriever:
 
         deduped.sort(key=lambda h: h.score, reverse=True)
         return deduped[:top_k]
+
+    async def retrieve_with_memory(
+        self,
+        query: str,
+        user_id: str,
+        session_id: str,
+        recent_sessions: list[str],
+        domain: str | None = None,
+        top_k: int = 10,
+        sources: list[str] | None = None,
+    ) -> dict:
+        """Retrieve documents + memory entities in parallel.
+
+        Returns {"documents": list[Hit], "memory": list[Entity]}.
+        Memory is optional — graceful degrade if entity_memory unavailable.
+        """
+        import asyncio
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        # Documents (sync, run in thread)
+        loop = asyncio.get_event_loop()
+        doc_task = loop.run_in_executor(
+            None, lambda: self.retrieve(query, top_k, sources, domain)
+        )
+
+        # Memory (async, graceful)
+        async def _safe_memory():
+            if self.entity_memory is None:
+                return []
+            try:
+                return await self.entity_memory.retrieve(
+                    user_id=user_id,
+                    query=query,
+                    current_session_id=session_id,
+                    recent_sessions=recent_sessions,
+                    domain=domain,
+                )
+            except Exception as e:
+                logger.error("Memory retrieval failed: %s", e, exc_info=True)
+                return []
+
+        docs, memory = await asyncio.gather(doc_task, _safe_memory())
+        return {"documents": docs, "memory": memory}

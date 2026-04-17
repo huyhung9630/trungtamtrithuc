@@ -20,3 +20,5 @@ youtube-transcript-api
 # openai-whisper  # optional — heavy dependency, uncomment if needed
 tiktoken
 numpy
+sentence-transformers
+pytest-asyncio
