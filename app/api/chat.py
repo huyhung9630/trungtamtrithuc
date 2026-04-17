@@ -73,7 +73,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
     history = memory.get_history(request.session_id)
 
-    domain = request.domain if request.domain and request.domain != "general" else None
+    domain = request.domain if request.domain and request.domain not in ("general", "mặc định") else None
 
     try:
         result = chain.answer(
@@ -95,4 +95,5 @@ async def chat(request: ChatRequest) -> ChatResponse:
         answer=result["answer"],
         sources=result.get("sources", []),
         session_id=request.session_id,
+        suggested_questions=result.get("suggested_questions", []),
     )

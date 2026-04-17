@@ -21,6 +21,7 @@ class ChatResponse(BaseModel):
     answer: str
     sources: list[dict[str, Any]] = Field(default_factory=list)
     session_id: str
+    suggested_questions: list[str] = Field(default_factory=list)
 
 
 class IngestRequest(BaseModel):

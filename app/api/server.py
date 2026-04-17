@@ -128,6 +128,7 @@ def chat(req: ChatRequest) -> ChatResponse:
         session_id=req.session_id,
         confidence=result.get("confidence", "high"),
         rewritten_query=result.get("rewritten_query", ""),
+        suggested_questions=result.get("suggested_questions", []),
     )
 
 

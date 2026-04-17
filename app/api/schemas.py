@@ -30,6 +30,7 @@ class ChatResponse(BaseModel):
     session_id: str
     confidence: str = "high"
     rewritten_query: str = ""
+    suggested_questions: list[str] = []
 
 
 # ---------------------------------------------------------------------------

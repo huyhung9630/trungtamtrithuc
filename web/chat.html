@@ -167,6 +167,8 @@
     }
     .msg.user .bubble { background: var(--accent); color: var(--white); border-bottom-right-radius: 3px; }
     .msg.ai .bubble { background: var(--white); border: 1px solid var(--gray-200); border-bottom-left-radius: 3px; }
+    .msg.ai .bubble a { color: var(--accent); text-decoration: underline; word-break: break-all; }
+    .msg.ai .bubble a:hover { color: var(--accent-hover); }
 
     .sources { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; }
     .source-card {
@@ -205,6 +207,25 @@
     .conf-high { background: #dcfce7; color: #15803d; }
     .conf-mid  { background: #fef9c3; color: #854d0e; }
     .conf-low  { background: #fee2e2; color: #b91c1c; }
+
+    .suggestions { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.35rem; }
+    .suggestion-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      color: var(--accent);
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1.4;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .suggestion-btn:hover { background: #eff6ff; border-color: var(--accent); }
+    .suggestion-btn::before { content: '💡 '; }
 
     .typing span {
       display: inline-block;
@@ -281,12 +302,13 @@
       <button class="btn-new" id="newChatBtn">+ Cuộc hội thoại mới</button>
       <div class="domain-label">Lĩnh vực chuyên gia</div>
       <select class="domain-select" id="domainSelect">
-        <option value="general">Tất cả lĩnh vực</option>
-        <option value="education">Giáo dục</option>
-        <option value="technology">Công nghệ</option>
-        <option value="science">Khoa học</option>
-        <option value="business">Kinh doanh</option>
-        <option value="health">Y tế & Sức khỏe</option>
+        <option value="mặc định">Tất cả lĩnh vực</option>
+        <option value="bim">BIM</option>
+        <option value="mep">MEP</option>
+        <option value="kết cấu">Kết cấu</option>
+        <option value="marketing">Marketing</option>
+        <option value="pháp lý">Pháp lý</option>
+        <option value="sản xuất">Sản xuất</option>
       </select>
       <div class="sidebar-label">Lịch sử</div>
       <div class="session-list" id="sessionList"></div>
@@ -342,7 +364,7 @@
       if (!s || !s.messages || !s.messages.length) {
         showEmpty();
       } else {
-        s.messages.forEach(m => addBubble(m.role, m.content, m.sources, false));
+        s.messages.forEach(m => addBubble(m.role, m.content, m.sources, false, m.suggestions));
       }
       renderSessionList();
     }
@@ -362,11 +384,11 @@
       }
     }
 
-    function saveMessage(role, content, sources) {
+    function saveMessage(role, content, sources, suggestions) {
       ensureSession();
       const s = sessions.find(x => x.id === currentSessionId);
       s.messages = s.messages || [];
-      s.messages.push({ role, content, sources });
+      s.messages.push({ role, content, sources, suggestions });
       if (!s.title && role === 'user') s.title = content.slice(0, 48);
       localStorage.setItem('ttt_sessions', JSON.stringify(sessions));
       renderSessionList();
@@ -423,7 +445,32 @@
       return `<div class="sources">${items}</div>`;
     }
 
-    function addBubble(role, text, sources, save = true) {
+    function buildSuggestionsHTML(questions) {
+      if (!questions || !questions.length) return '';
+      const btns = questions.map(q =>
+        `<button class="suggestion-btn" type="button">${q}</button>`
+      ).join('');
+      return `<div class="suggestions">${btns}</div>`;
+    }
+
+    function escapeHTML(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function linkify(text) {
+      const escaped = escapeHTML(text);
+      // Replace "text (URL)" pattern → "text (Xem nguồn)" with hyperlink
+      // Also replace standalone URLs → "Xem nguồn"
+      return escaped
+        .replace(/\((https?:\/\/[^\s<)]+)\)/g,
+          '(<a href="$1" target="_blank" rel="noopener">Xem nguồn</a>)')
+        .replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g,
+          '$1<a href="$2" target="_blank" rel="noopener">Xem nguồn</a>');
+    }
+
+    function addBubble(role, text, sources, save = true, suggestions = null) {
       clearEmpty();
       const msg = document.createElement('div');
       msg.className = `msg ${role}`;
@@ -432,15 +479,30 @@
       av.textContent = role === 'user' ? 'Bạn' : 'AI';
       const bbl = document.createElement('div');
       bbl.className = 'bubble';
-      bbl.textContent = text;
+      if (role === 'ai') {
+        bbl.innerHTML = linkify(text);
+      } else {
+        bbl.textContent = text;
+      }
       if (role === 'ai' && sources && sources.length) {
         bbl.insertAdjacentHTML('beforeend', buildSourcesHTML(sources));
+      }
+      if (role === 'ai' && suggestions && suggestions.length) {
+        bbl.insertAdjacentHTML('beforeend', buildSuggestionsHTML(suggestions));
+        bbl.querySelectorAll('.suggestion-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            // Remove all suggestion buttons after one is clicked
+            document.querySelectorAll('.suggestions').forEach(el => el.remove());
+            inputBox.value = btn.textContent;
+            send();
+          });
+        });
       }
       msg.appendChild(av);
       msg.appendChild(bbl);
       messagesEl.appendChild(msg);
       messagesEl.scrollTop = messagesEl.scrollHeight;
-      if (save) saveMessage(role, text, sources);
+      if (save) saveMessage(role, text, sources, suggestions);
       return bbl;
     }
 
@@ -480,7 +542,9 @@
         removeTyping();
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
-        addBubble('ai', data.answer, data.sources || []);
+        // Remove old suggestion buttons before adding new response
+        document.querySelectorAll('.suggestions').forEach(el => el.remove());
+        addBubble('ai', data.answer, data.sources || [], true, data.suggested_questions || []);
       } catch (err) {
         removeTyping();
         addBubble('ai', `Lỗi kết nối: ${err.message}. Kiểm tra server đang chạy tại localhost:8000.`);
