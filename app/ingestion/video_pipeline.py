@@ -156,10 +156,21 @@ def ingest_youtube(
     url: str,
     metadata: dict | None = None,
 ) -> IngestResult:
-    from app.ingestion.youtube_fetcher import fetch_youtube_transcript
+    from app.ingestion.youtube_fetcher import (
+        fetch_youtube_transcript, fetch_youtube_via_whisper,
+    )
 
     logger.info("Ingesting YouTube video: %s", url)
-    data = fetch_youtube_transcript(url)
+    try:
+        data = fetch_youtube_transcript(url)
+    except Exception as exc:
+        # Transcript API đã retry qua proxy list mà vẫn bị chặn hoặc không có transcript.
+        # Fallback: yt-dlp tải audio → Whisper phiên âm (không cần endpoint transcript).
+        logger.warning(
+            "Transcript API failed (%s). Fallback yt-dlp + Whisper cho %s",
+            type(exc).__name__, url,
+        )
+        data = fetch_youtube_via_whisper(url)
 
     num_chunks = _upsert_video_chunks(
         segments=data["segments"],

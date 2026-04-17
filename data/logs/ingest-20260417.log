@@ -166,3 +166,1425 @@ anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type':
 2026-04-17 11:30:45,587 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
 2026-04-17 11:31:23,756 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
 2026-04-17 11:31:49,037 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 14:53:26,024 ERROR app.ingestion.video_pipeline Failed to ingest video SUysp3sJHbA: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=SUysp3sJHbA! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=SUysp3sJHbA! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:27,421 ERROR app.ingestion.video_pipeline Failed to ingest video i_OHQH4-M2Y: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=i_OHQH4-M2Y! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=i_OHQH4-M2Y! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:29,042 ERROR app.ingestion.video_pipeline Failed to ingest video ob-mYGqqFQw: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=ob-mYGqqFQw! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=ob-mYGqqFQw! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:30,638 ERROR app.ingestion.video_pipeline Failed to ingest video Lr37J1ZUeZI: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Lr37J1ZUeZI! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Lr37J1ZUeZI! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:32,478 ERROR app.ingestion.video_pipeline Failed to ingest video TU0ZcDFq0e0: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=TU0ZcDFq0e0! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=TU0ZcDFq0e0! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:33,961 ERROR app.ingestion.video_pipeline Failed to ingest video MTGJuu9CeMk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=MTGJuu9CeMk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=MTGJuu9CeMk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:35,517 ERROR app.ingestion.video_pipeline Failed to ingest video 52KBhQqqHuc: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=52KBhQqqHuc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=52KBhQqqHuc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:36,857 ERROR app.ingestion.video_pipeline Failed to ingest video X7lgIa6guKg: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=X7lgIa6guKg! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=X7lgIa6guKg! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:38,855 ERROR app.ingestion.video_pipeline Failed to ingest video Phr7vBx9yFQ: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Phr7vBx9yFQ! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Phr7vBx9yFQ! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:40,237 ERROR app.ingestion.video_pipeline Failed to ingest video 7pKN_pjPW04: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=7pKN_pjPW04! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=7pKN_pjPW04! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:53:41,756 ERROR app.ingestion.video_pipeline Failed to ingest video cCHPjvswTpQ: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=cCHPjvswTpQ! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=cCHPjvswTpQ! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:16,226 ERROR app.ingestion.video_pipeline Failed to ingest video CF3drb6H3Yw: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=CF3drb6H3Yw! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=CF3drb6H3Yw! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:17,487 ERROR app.ingestion.video_pipeline Failed to ingest video -pdhkOAK67M: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:19,066 ERROR app.ingestion.video_pipeline Failed to ingest video w_WDsqIWJPc: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=w_WDsqIWJPc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=w_WDsqIWJPc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:20,413 ERROR app.ingestion.video_pipeline Failed to ingest video yDx7ActarLk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=yDx7ActarLk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=yDx7ActarLk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:22,227 ERROR app.ingestion.video_pipeline Failed to ingest video 93WnK4cpwFk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=93WnK4cpwFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=93WnK4cpwFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:23,473 ERROR app.ingestion.video_pipeline Failed to ingest video Q67n7V1NqFk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Q67n7V1NqFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Q67n7V1NqFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:24,962 ERROR app.ingestion.video_pipeline Failed to ingest video SmMo1vt0xHc: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=SmMo1vt0xHc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=SmMo1vt0xHc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:26,270 ERROR app.ingestion.video_pipeline Failed to ingest video 7GB-EyxxMp8: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=7GB-EyxxMp8! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=7GB-EyxxMp8! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:27,446 ERROR app.ingestion.video_pipeline Failed to ingest video T9PQ05F9GEk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=T9PQ05F9GEk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=T9PQ05F9GEk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:28,697 ERROR app.ingestion.video_pipeline Failed to ingest video dxRwFTbgIwY: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=dxRwFTbgIwY! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=dxRwFTbgIwY! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:29,971 ERROR app.ingestion.video_pipeline Failed to ingest video HDo9BNE0pH4: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=HDo9BNE0pH4! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=HDo9BNE0pH4! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:45,576 ERROR app.ingestion.video_pipeline Failed to ingest video CF3drb6H3Yw: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=CF3drb6H3Yw! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=CF3drb6H3Yw! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:46,950 ERROR app.ingestion.video_pipeline Failed to ingest video -pdhkOAK67M: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:48,345 ERROR app.ingestion.video_pipeline Failed to ingest video w_WDsqIWJPc: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=w_WDsqIWJPc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=w_WDsqIWJPc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:49,670 ERROR app.ingestion.video_pipeline Failed to ingest video yDx7ActarLk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=yDx7ActarLk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=yDx7ActarLk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:51,067 ERROR app.ingestion.video_pipeline Failed to ingest video 93WnK4cpwFk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=93WnK4cpwFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=93WnK4cpwFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:52,339 ERROR app.ingestion.video_pipeline Failed to ingest video Q67n7V1NqFk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Q67n7V1NqFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=Q67n7V1NqFk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:54,018 ERROR app.ingestion.video_pipeline Failed to ingest video SmMo1vt0xHc: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=SmMo1vt0xHc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=SmMo1vt0xHc! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:55,387 ERROR app.ingestion.video_pipeline Failed to ingest video 7GB-EyxxMp8: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=7GB-EyxxMp8! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=7GB-EyxxMp8! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:56,724 ERROR app.ingestion.video_pipeline Failed to ingest video T9PQ05F9GEk: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=T9PQ05F9GEk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=T9PQ05F9GEk! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:57,897 ERROR app.ingestion.video_pipeline Failed to ingest video dxRwFTbgIwY: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=dxRwFTbgIwY! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=dxRwFTbgIwY! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:54:59,738 ERROR app.ingestion.video_pipeline Failed to ingest video HDo9BNE0pH4: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=HDo9BNE0pH4! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 201, in ingest_youtube_playlist
+    r = ingest_youtube(
+        url=f"https://www.youtube.com/watch?v={vid}",
+        metadata=metadata,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=HDo9BNE0pH4! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 14:57:01,575 ERROR app.api.ingest YouTube ingest error for https://www.youtube.com/watch?v=-pdhkOAK67M: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/ingest.py", line 195, in ingest_youtube
+    result = _ingest_yt(url=clean_url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 85, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 15:04:02,964 WARNING app.ingestion.youtube_fetcher YouTube IP blocked (no proxy configured). Set WEBSHARE_PROXY_* hoặc YOUTUBE_PROXY_HTTP để tự đổi IP. Thử lại 1/6 sau 2.0s...
+2026-04-17 15:04:06,327 WARNING app.ingestion.youtube_fetcher YouTube IP blocked (no proxy configured). Set WEBSHARE_PROXY_* hoặc YOUTUBE_PROXY_HTTP để tự đổi IP. Thử lại 2/6 sau 3.0s...
+2026-04-17 15:04:10,732 WARNING app.ingestion.youtube_fetcher YouTube IP blocked (no proxy configured). Set WEBSHARE_PROXY_* hoặc YOUTUBE_PROXY_HTTP để tự đổi IP. Thử lại 3/6 sau 4.5s...
+2026-04-17 15:04:16,608 WARNING app.ingestion.youtube_fetcher YouTube IP blocked (no proxy configured). Set WEBSHARE_PROXY_* hoặc YOUTUBE_PROXY_HTTP để tự đổi IP. Thử lại 4/6 sau 6.8s...
+2026-04-17 15:04:24,812 WARNING app.ingestion.youtube_fetcher YouTube IP blocked (no proxy configured). Set WEBSHARE_PROXY_* hoặc YOUTUBE_PROXY_HTTP để tự đổi IP. Thử lại 5/6 sau 10.0s...
+2026-04-17 15:04:36,089 ERROR app.api.ingest YouTube ingest error for https://www.youtube.com/watch?v=-pdhkOAK67M: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/ingest.py", line 195, in ingest_youtube
+    result = _ingest_yt(url=clean_url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/video_pipeline.py", line 162, in ingest_youtube
+    data = fetch_youtube_transcript(url)
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/ingestion/youtube_fetcher.py", line 133, in fetch_youtube_transcript
+    fetched = api.fetch(video_id, languages=langs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_api.py", line 73, in fetch
+    .fetch(preserve_formatting=preserve_formatting)
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 139, in fetch
+    _raise_http_errors(response, self.video_id).text,
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/youtube_transcript_api/_transcripts.py", line 96, in _raise_http_errors
+    raise IpBlocked(video_id)
+youtube_transcript_api._errors.IpBlocked: 
+Could not retrieve a transcript for the video https://www.youtube.com/watch?v=-pdhkOAK67M! This is most likely caused by:
+
+YouTube is blocking requests from your IP. This usually is due to one of the following reasons:
+- You have done too many requests and your IP has been blocked by YouTube
+- You are doing requests from an IP belonging to a cloud provider (like AWS, Google Cloud Platform, Azure, etc.). Unfortunately, most IPs from cloud providers are blocked by YouTube.
+
+Ways to work around this are explained in the "Working around IP bans" section of the README (https://github.com/jdepoix/youtube-transcript-api?tab=readme-ov-file#working-around-ip-bans-requestblocked-or-ipblocked-exception).
+
+
+If you are sure that the described cause is not responsible for this error and that a transcript should be retrievable, please create an issue at https://github.com/jdepoix/youtube-transcript-api/issues. Please add which version of youtube_transcript_api you are using and provide the information needed to replicate the error. Also make sure that there are no open issues which already describe your problem!
+2026-04-17 15:28:20,862 WARNING app.ingestion.video_pipeline Transcript API failed (RequestBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=-pdhkOAK67M
+2026-04-17 15:33:41,512 WARNING app.ingestion.video_pipeline Transcript API failed (RequestBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=CF3drb6H3Yw
+2026-04-17 15:35:11,211 WARNING app.ingestion.video_pipeline Transcript API failed (RequestBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=-pdhkOAK67M
+2026-04-17 15:36:35,656 WARNING app.ingestion.video_pipeline Transcript API failed (RequestBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=w_WDsqIWJPc
+2026-04-17 15:38:06,887 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=yDx7ActarLk
+2026-04-17 15:39:37,376 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=93WnK4cpwFk
+2026-04-17 15:41:06,382 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=Q67n7V1NqFk
+2026-04-17 15:42:35,918 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=SmMo1vt0xHc
+2026-04-17 15:58:01,157 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=7GB-EyxxMp8
+2026-04-17 16:03:44,054 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=T9PQ05F9GEk
+2026-04-17 16:05:46,116 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=dxRwFTbgIwY
+2026-04-17 16:07:16,706 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=HDo9BNE0pH4
+2026-04-17 16:08:49,962 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=CF3drb6H3Yw
+2026-04-17 16:10:21,519 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=-pdhkOAK67M
+2026-04-17 16:11:45,191 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=w_WDsqIWJPc
+2026-04-17 16:13:14,028 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=yDx7ActarLk
+2026-04-17 16:14:49,279 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=93WnK4cpwFk
+2026-04-17 16:16:17,294 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=Q67n7V1NqFk
+2026-04-17 16:17:50,386 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=SmMo1vt0xHc
+2026-04-17 16:19:22,056 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=7GB-EyxxMp8
+2026-04-17 16:20:51,924 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=T9PQ05F9GEk
+2026-04-17 16:22:22,888 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=dxRwFTbgIwY
+2026-04-17 16:23:55,075 WARNING app.ingestion.video_pipeline Transcript API failed (IpBlocked). Fallback yt-dlp + Whisper cho https://www.youtube.com/watch?v=HDo9BNE0pH4

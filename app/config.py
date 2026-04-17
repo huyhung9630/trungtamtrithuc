@@ -46,6 +46,20 @@ RERANK_TOP_K: int = int(os.getenv("RERANK_TOP_K", "5"))
 API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
 API_PORT: int = int(os.getenv("API_PORT", "8000"))
 
+# YouTube transcript proxy (để vượt qua IP block).
+# 3 cách cấu hình, ưu tiên theo thứ tự:
+# 1) YOUTUBE_PROXY_LIST: chuỗi các proxy (ngăn cách dấu phẩy hoặc xuống dòng),
+#    mỗi dòng "http://user:pass@host:port" — sẽ xoay vòng mỗi lần retry
+# 2) WEBSHARE_PROXY_USERNAME + WEBSHARE_PROXY_PASSWORD: rotating endpoint của Webshare
+# 3) YOUTUBE_PROXY_HTTP / YOUTUBE_PROXY_HTTPS: 1 proxy cố định
+WEBSHARE_PROXY_USERNAME: str = os.getenv("WEBSHARE_PROXY_USERNAME", "")
+WEBSHARE_PROXY_PASSWORD: str = os.getenv("WEBSHARE_PROXY_PASSWORD", "")
+YOUTUBE_PROXY_HTTP: str = os.getenv("YOUTUBE_PROXY_HTTP", "")
+YOUTUBE_PROXY_HTTPS: str = os.getenv("YOUTUBE_PROXY_HTTPS", "")
+YOUTUBE_PROXY_LIST: str = os.getenv("YOUTUBE_PROXY_LIST", "")
+YOUTUBE_TRANSCRIPT_MAX_RETRIES: int = int(os.getenv("YOUTUBE_TRANSCRIPT_MAX_RETRIES", "10"))
+YOUTUBE_TRANSCRIPT_RETRY_DELAY: float = float(os.getenv("YOUTUBE_TRANSCRIPT_RETRY_DELAY", "1.5"))
+
 # Data dirs
 UPLOAD_DIR = BASE_DIR / "data" / "uploads"
 LOG_DIR = BASE_DIR / "data" / "logs"
