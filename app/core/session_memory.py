@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Optional
 
 SESSIONS_DIR = Path(__file__).parent.parent.parent / "data" / "sessions"
-MAX_HISTORY_TURNS = 10  # pairs (user + assistant)
+MAX_HISTORY_TURNS = 3  # pairs (user + assistant) — giữ 3 lượt gần nhất để tiết kiệm tokens
 
 
 def _session_path(session_id: str) -> Path:

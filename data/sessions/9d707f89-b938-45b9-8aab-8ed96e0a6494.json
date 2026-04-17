@@ -1,0 +1,14 @@
+{
+  "session_id": "9d707f89-b938-45b9-8aab-8ed96e0a6494",
+  "updated_at": 1776395905.476495,
+  "history": [
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "Xin chào! Tôi là trợ lý AI của bạn. Tôi có thể giúp bạn tra cứu thông tin và trả lời các câu hỏi. Bạn cần hỗ trợ gì hôm nay?"
+    }
+  ]
+}

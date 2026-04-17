@@ -45,6 +45,31 @@ def _fetch_title_ytdlp(video_id: str) -> str:
     return ""
 
 
+def fetch_playlist_video_ids(playlist_url: str) -> list[dict]:
+    """Extract all video IDs and titles from a YouTube playlist using yt-dlp."""
+    result = subprocess.run(
+        [
+            "yt-dlp", "--flat-playlist", "--print", "%(id)s\t%(title)s",
+            "--no-warnings", playlist_url,
+        ],
+        capture_output=True, text=True, timeout=120,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"yt-dlp playlist error: {result.stderr[:500]}")
+
+    videos = []
+    for line in result.stdout.strip().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split("\t", 1)
+        video_id = parts[0].strip()
+        title = parts[1].strip() if len(parts) > 1 else video_id
+        if video_id and re.fullmatch(r"[A-Za-z0-9_-]{11}", video_id):
+            videos.append({"video_id": video_id, "title": title})
+    return videos
+
+
 def fetch_youtube_transcript(
     url_or_id: str,
     langs: list[str] | None = None,

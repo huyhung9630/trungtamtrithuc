@@ -1,0 +1,158 @@
+2026-04-17 09:02:32,024 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 09:02:57,337 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 09:03:33,850 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 09:03:59,195 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 09:04:37,313 WARNING app.core.voyage_embed voyage retry 1/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 09:05:02,640 WARNING app.core.voyage_embed voyage retry 2/5 after 25s: 429 Client Error: Too Many Requests for url: https://api.voyageai.com/v1/embeddings
+2026-04-17 09:07:41,479 ERROR app.api.chat RAG chain error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8XXxiEn3YvtVszmgkkS'}
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/chat.py", line 79, in chat
+    result = chain.answer(
+        query=request.message,
+        history=history,
+        expert_domain=domain,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/rag/chain.py", line 73, in answer
+    answer_text = self.claude.generate(
+        system_prompt=system_prompt,
+        context_block=context_block,
+        messages=messages,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/core/claude_client.py", line 41, in generate
+    response = self.client.messages.create(
+        model=model or self.model,
+    ...<3 lines>...
+        temperature=temperature,
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_utils/_utils.py", line 282, in wrapper
+    return func(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/resources/messages/messages.py", line 996, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/v1/messages",
+        ^^^^^^^^^^^^^^^
+    ...<30 lines>...
+        stream_cls=Stream[RawMessageStreamEvent],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1364, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1137, in request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8XXxiEn3YvtVszmgkkS'}
+2026-04-17 09:08:33,218 ERROR app.api.chat RAG chain error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8XbmccH4hJfFJmuADQd'}
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/chat.py", line 79, in chat
+    result = chain.answer(
+        query=request.message,
+        history=history,
+        expert_domain=domain,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/rag/chain.py", line 73, in answer
+    answer_text = self.claude.generate(
+        system_prompt=system_prompt,
+        context_block=context_block,
+        messages=messages,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/core/claude_client.py", line 41, in generate
+    response = self.client.messages.create(
+        model=model or self.model,
+    ...<3 lines>...
+        temperature=temperature,
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_utils/_utils.py", line 282, in wrapper
+    return func(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/resources/messages/messages.py", line 996, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/v1/messages",
+        ^^^^^^^^^^^^^^^
+    ...<30 lines>...
+        stream_cls=Stream[RawMessageStreamEvent],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1364, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1137, in request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8XbmccH4hJfFJmuADQd'}
+2026-04-17 09:11:02,625 ERROR app.api.chat RAG chain error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8XnneRPsVsiPGZvyZKP'}
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/chat.py", line 79, in chat
+    result = chain.answer(
+        query=request.message,
+        history=history,
+        expert_domain=domain,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/rag/chain.py", line 73, in answer
+    answer_text = self.claude.generate(
+        system_prompt=system_prompt,
+        context_block=context_block,
+        messages=messages,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/core/claude_client.py", line 41, in generate
+    response = self.client.messages.create(
+        model=model or self.model,
+    ...<3 lines>...
+        temperature=temperature,
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_utils/_utils.py", line 282, in wrapper
+    return func(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/resources/messages/messages.py", line 996, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/v1/messages",
+        ^^^^^^^^^^^^^^^
+    ...<30 lines>...
+        stream_cls=Stream[RawMessageStreamEvent],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1364, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1137, in request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8XnneRPsVsiPGZvyZKP'}
+2026-04-17 09:27:53,795 ERROR app.api.chat RAG chain error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8Z5KmVmAs4ceti8W5tU'}
+Traceback (most recent call last):
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/api/chat.py", line 79, in chat
+    result = chain.answer(
+        query=request.message,
+        history=history,
+        expert_domain=domain,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/rag/chain.py", line 73, in answer
+    answer_text = self.claude.generate(
+        system_prompt=system_prompt,
+        context_block=context_block,
+        messages=messages,
+    )
+  File "/Users/haletrongnghia/Downloads/video_tttt/trungtamtrithuc/trungtamtrithuc/app/core/claude_client.py", line 41, in generate
+    response = self.client.messages.create(
+        model=model or self.model,
+    ...<3 lines>...
+        temperature=temperature,
+    )
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_utils/_utils.py", line 282, in wrapper
+    return func(*args, **kwargs)
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/resources/messages/messages.py", line 996, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/v1/messages",
+        ^^^^^^^^^^^^^^^
+    ...<30 lines>...
+        stream_cls=Stream[RawMessageStreamEvent],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1364, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/anthropic/_base_client.py", line 1137, in request
+    raise self._make_status_error_from_response(err.response) from None
+anthropic.BadRequestError: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.'}, 'request_id': 'req_011Ca8Z5KmVmAs4ceti8W5tU'}

@@ -175,3 +175,48 @@ def ingest_youtube(
         num_pages=1,
         source_name=data["title"] or url,
     )
+
+
+def ingest_youtube_playlist(
+    playlist_url: str,
+    metadata: dict | None = None,
+) -> list[dict]:
+    """Ingest all videos from a YouTube playlist, one by one.
+
+    Returns a list of per-video results:
+      [{"video_id": ..., "title": ..., "status": "ok"|"error", "chunks_added": int, "error": str|None}, ...]
+    """
+    from app.ingestion.youtube_fetcher import fetch_playlist_video_ids
+
+    logger.info("Fetching playlist: %s", playlist_url)
+    videos = fetch_playlist_video_ids(playlist_url)
+    logger.info("Found %d videos in playlist", len(videos))
+
+    results = []
+    for i, v in enumerate(videos, 1):
+        vid = v["video_id"]
+        title = v["title"]
+        logger.info("[%d/%d] Ingesting: %s (%s)", i, len(videos), title, vid)
+        try:
+            r = ingest_youtube(
+                url=f"https://www.youtube.com/watch?v={vid}",
+                metadata=metadata,
+            )
+            results.append({
+                "video_id": vid,
+                "title": r.source_name,
+                "status": "ok",
+                "chunks_added": r.num_chunks,
+                "error": None,
+            })
+        except Exception as exc:
+            logger.exception("Failed to ingest video %s: %s", vid, exc)
+            results.append({
+                "video_id": vid,
+                "title": title,
+                "status": "error",
+                "chunks_added": 0,
+                "error": str(exc),
+            })
+
+    return results

@@ -127,6 +127,15 @@ async def ingest_video_file(
 # Ingest — YouTube URL
 # ---------------------------------------------------------------------------
 
+def _is_playlist_url(url: str) -> bool:
+    """Detect if URL is a YouTube playlist (not a single video with list param)."""
+    import re
+    # Pure playlist URL: youtube.com/playlist?list=...
+    if re.search(r"youtube\.com/playlist\?", url):
+        return True
+    return False
+
+
 @router.post("/youtube", response_model=IngestResponse)
 async def ingest_youtube(url: str, collection: str = "ttt_videos") -> IngestResponse:
     if not url or not url.strip():
@@ -136,9 +145,35 @@ async def ingest_youtube(url: str, collection: str = "ttt_videos") -> IngestResp
             message="Vui lòng nhập URL YouTube.",
         )
 
+    clean_url = url.strip()
+
+    # Auto-detect playlist URLs and route to playlist handler
+    if _is_playlist_url(clean_url):
+        try:
+            from app.ingestion.video_pipeline import ingest_youtube_playlist as _ingest_pl
+            results = _ingest_pl(playlist_url=clean_url)
+            total_ok = sum(1 for r in results if r["status"] == "ok")
+            total_chunks = sum(r["chunks_added"] for r in results)
+            failed = [r for r in results if r["status"] == "error"]
+            msg = f"Playlist: {total_ok}/{len(results)} video thành công, tổng {total_chunks} đoạn."
+            if failed:
+                msg += f" ({len(failed)} video lỗi)"
+            return IngestResponse(
+                status="ok" if total_ok > 0 else "error",
+                chunks_added=total_chunks,
+                message=msg,
+            )
+        except Exception as exc:
+            logger.exception("Playlist ingest error for %s: %s", clean_url, exc)
+            return IngestResponse(
+                status="error",
+                chunks_added=0,
+                message=f"Lỗi khi nạp playlist: {exc}",
+            )
+
     try:
         from app.ingestion.video_pipeline import ingest_youtube as _ingest_yt
-        result = _ingest_yt(url=url.strip())
+        result = _ingest_yt(url=clean_url)
         return IngestResponse(
             status="ok",
             chunks_added=result.num_chunks,
@@ -151,9 +186,38 @@ async def ingest_youtube(url: str, collection: str = "ttt_videos") -> IngestResp
             message=f"URL không hợp lệ: {exc}",
         )
     except Exception as exc:
-        logger.exception("YouTube ingest error for %s: %s", url, exc)
+        logger.exception("YouTube ingest error for %s: %s", clean_url, exc)
         return IngestResponse(
             status="error",
             chunks_added=0,
             message=f"Lỗi khi nạp YouTube: {exc}",
         )
+
+
+# ---------------------------------------------------------------------------
+# Ingest — YouTube Playlist
+# ---------------------------------------------------------------------------
+
+@router.post("/youtube-playlist")
+async def ingest_youtube_playlist(url: str) -> dict:
+    if not url or not url.strip():
+        return {"status": "error", "message": "Vui lòng nhập URL playlist.", "results": []}
+
+    try:
+        from app.ingestion.video_pipeline import ingest_youtube_playlist as _ingest_pl
+        results = _ingest_pl(playlist_url=url.strip())
+        total_ok = sum(1 for r in results if r["status"] == "ok")
+        total_chunks = sum(r["chunks_added"] for r in results)
+        return {
+            "status": "ok",
+            "message": f"Hoàn tất: {total_ok}/{len(results)} video thành công, tổng {total_chunks} đoạn.",
+            "total_videos": len(results),
+            "success_count": total_ok,
+            "total_chunks": total_chunks,
+            "results": results,
+        }
+    except RuntimeError as exc:
+        return {"status": "error", "message": f"Lỗi playlist: {exc}", "results": []}
+    except Exception as exc:
+        logger.exception("Playlist ingest error for %s: %s", url, exc)
+        return {"status": "error", "message": f"Lỗi khi nạp playlist: {exc}", "results": []}

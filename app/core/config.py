@@ -22,7 +22,7 @@ def _opt(key: str, default: str = "") -> str:
 
 # --- LLM ---
 ANTHROPIC_API_KEY: str = _req("ANTHROPIC_API_KEY")
-CLAUDE_MODEL: str = _opt("CLAUDE_MODEL", "claude-sonnet-4-20250514")
+CLAUDE_MODEL: str = _opt("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 CLAUDE_HAIKU_MODEL: str = _opt("CLAUDE_HAIKU_MODEL", "claude-haiku-4-5-20251001")
 
 # --- Groq (Whisper API) ---
