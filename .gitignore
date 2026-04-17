@@ -2,4 +2,11 @@
 .omc
 __pycache__
 .claude
-FD-EI60.pdf
+.DS_Store
+venv
+venv39_backup
+data/logs/
+data/sessions/
+test.md
+test2.md
+test_kh_truyenthong.md

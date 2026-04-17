@@ -153,6 +153,12 @@ def build_context_block(hits: list[Hit]) -> tuple[str, list[dict]]:
 
         lines.append(" — ".join(meta_parts))
         lines.append(hit.text)
+        # Include table_data if present (original Markdown table for precise answers)
+        table_data = payload.get("table_data", "")
+        if table_data:
+            lines.append("")
+            lines.append("Dữ liệu bảng chi tiết:")
+            lines.append(table_data)
         lines.append("")
 
     # Build deduplicated source mapping for the frontend
