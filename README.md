@@ -1,6 +1,6 @@
 # Trung Tâm Tri Thức — RAG Chatbot
 
-Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Generation): nạp tài liệu (PDF/DOCX/XLSX/TXT/MD), video (MP4/YouTube/Playlist), trả lời tiếng Việt kèm trích dẫn nguồn và gợi ý câu hỏi tiếp theo. Tích hợp **Entity Memory System** để nhớ ngữ cảnh hội thoại qua nhiều phiên.
+Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Generation): nạp tài liệu (PDF/DOCX/XLSX/TXT/MD), video (MP4/YouTube/Playlist), trả lời tiếng Việt kèm trích dẫn nguồn và gợi ý câu hỏi tiếp theo. Tích hợp **Entity Memory Store** (Qdrant) cho phép retrieve memory đã có từ phiên trước.
 
 ## Kiến trúc tổng thể
 
@@ -57,11 +57,6 @@ Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Gen
             │                └──────────────────────┬───────────────────┘
             │                                       ▼
             └──► Answer + Sources + Suggested Questions (JSON)
-                                                    │
-                                                    ▼
-                              Background task (mỗi N turn):
-                              Claude Haiku → ExtractedMemory + Summary
-                              → upsert ttt_memory (dedup + conflict)
 ```
 
 ## Yêu cầu hệ thống
@@ -101,11 +96,10 @@ cp .env.example .env            # điền API keys (xem bảng bên dưới)
 | Biến | Mặc định | Mô tả |
 |------|----------|-------|
 | `CLAUDE_MODEL` | `claude-sonnet-4-20250514` | Model trả lời chính |
-| `CLAUDE_HAIKU_MODEL` | `claude-haiku-4-5-20251001` | Vision + extract memory + describe table |
+| `CLAUDE_HAIKU_MODEL` | `claude-haiku-4-5-20251001` | Vision + describe table |
 | `COLLECTION_DOCS` | `ttt_documents` | Collection tài liệu |
 | `COLLECTION_VIDEOS` | `ttt_videos` | Collection video |
 | `MEMORY_COLLECTION` | `ttt_memory` | Collection memory |
-| `MEMORY_EXTRACTION_EVERY_N_TURNS` | `4` | Trigger extract memory mỗi N turn |
 | `CHUNK_MAX_TOKENS` | `700` | Kích thước chunk tối đa |
 | `CHUNK_OVERLAP_TOKENS` | `80` | Overlap giữa các chunk |
 | `TOP_K` | `7` | Số hit trước rerank |
@@ -178,8 +172,7 @@ trungtamtrithuc/
 │   │   ├── doc_pipeline.py     # Table detect/process + embed + store
 │   │   ├── video_pipeline.py   # Video ingest (YouTube + local + playlist)
 │   │   ├── video_transcriber.py# Whisper transcription
-│   │   ├── youtube_fetcher.py  # YouTube transcript (with proxy rotation)
-│   │   └── entity_extractor.py # Claude Haiku extract memory + summary
+│   │   └── youtube_fetcher.py  # YouTube transcript (with proxy rotation)
 │   └── rag/
 │       ├── chain.py            # Retrieve → rerank → generate → parse suggestions
 │       ├── retriever.py        # Multi-source parallel search
@@ -312,7 +305,6 @@ const {answer, sources, suggested_questions} = await res.json();
 | Claude Vision | Docling fail / bảng có màu | ~$0.002/trang |
 | LLM mô tả bảng | Bảng có dữ liệu | ~$0.001/bảng |
 | Voyage embed | Luôn chạy | ~$0.0001/chunk |
-| Memory extract (Haiku) | Mỗi 4 turn | ~$0.0005/lần |
 | **File text thuần** | Docling OK | **~$0.001/file** |
 | **File phức tạp** | Vision + LLM | **~$0.005-0.01/file** |
 

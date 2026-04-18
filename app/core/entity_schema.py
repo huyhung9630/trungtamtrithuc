@@ -42,14 +42,5 @@ class MemoryRecord(BaseModel):
     turn_count: int = 0  # so turn da tom tat (cho summary)
 
 
-class ExtractedMemory(BaseModel):
-    """Output tu Claude Haiku extraction."""
-    text: str
-    category: MemoryCategory
-    tags: list[str] = Field(default_factory=list)
-    confidence: float
-
-
-# Backward compat aliases
+# Backward compat alias
 Entity = MemoryRecord
-ExtractedEntity = ExtractedMemory

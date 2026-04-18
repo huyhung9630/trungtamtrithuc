@@ -9,10 +9,10 @@ Tính năng chính:
 1. **Nạp tài liệu** đa định dạng (PDF, DOCX, XLSX, TXT, MD) qua pipeline 3 tier.
 2. **Nạp video** (YouTube URL, YouTube Playlist, file MP4/MKV/AVI/MOV) — phiên âm + embed theo timestamp.
 3. **Hỏi đáp** với chuyên gia theo domain (BIM, MEP, kết cấu, marketing, pháp lý, sản xuất, hoặc tự do).
-4. **Entity Memory System** — ghi nhớ thông tin cá nhân, sở thích, context qua nhiều phiên hội thoại.
+4. **Entity Memory Store** — retrieve memory record đã có trong Qdrant `ttt_memory` để đưa vào ngữ cảnh câu trả lời.
 5. **Gợi ý câu hỏi tiếp theo** tự động sau mỗi câu trả lời.
 
-Bộ công nghệ lõi: **Claude Sonnet 4** (trả lời) + **Claude Haiku 4.5** (Vision + extract memory + describe table), **Voyage AI** (`voyage-3`, 1024-dim) cho embedding, **Qdrant Cloud** làm vector store.
+Bộ công nghệ lõi: **Claude Sonnet 4** (trả lời) + **Claude Haiku 4.5** (Vision + describe table), **Voyage AI** (`voyage-3`, 1024-dim) cho embedding, **Qdrant Cloud** làm vector store.
 
 ---
 
@@ -47,9 +47,7 @@ Bộ công nghệ lõi: **Claude Sonnet 4** (trả lời) + **Claude Haiku 4.5**
   |  - Prompt builder |                    |    (table + Vision    |
   |  - Claude Sonnet4 |                    |     with context)     |
   |  - Suggestions    |                    |  - video_pipeline     |
-  +---------+---------+                    |  - entity_extractor   |
-            |                              |    (background task)  |
-            |                              +-----------+-----------+
+  +---------+---------+                    +-----------+-----------+
             |                                          |
   +---------v------------------------------------------v----------+
   |                    Qdrant Vector Database                    |
@@ -338,22 +336,9 @@ Bốn category:
 | `persistent` | Thông tin cá nhân bền vững | "Tên Tuấn, kỹ sư BIM, TDI" |
 | `preference` | Cách user muốn được trả lời | "Thích câu trả lời ngắn, bullet" |
 | `contextual` | Chủ đề đang quan tâm | "Đang chuẩn bị báo cáo Q2 cho sếp" |
-| `summary` | Tóm tắt session (cập nhật mỗi 4 turn) | "Trao đổi về kế hoạch truyền thông..." |
+| `summary` | Tóm tắt session | "Trao đổi về kế hoạch truyền thông..." |
 
-### Extraction flow (background task)
-
-```
-Mỗi N turn (mặc định 4):
-    lấy N*2 message gần nhất
-        ▼
-    app/ingestion/entity_extractor.extract_memories()
-        → Claude Haiku structured output
-        → (list[ExtractedMemory], summary)
-        ▼
-    EntityMemory.upsert() cho từng record
-```
-
-Không chặn request — chạy qua `BackgroundTasks`, không bao giờ raise ra ngoài.
+> Hệ thống hiện **không** tự sinh memory record từ hội thoại. Dữ liệu trong `ttt_memory` phải được nạp qua pipeline khác (ingestion tool riêng, import bulk, v.v.). Chat API chỉ đọc memory để đưa vào ngữ cảnh, không ghi.
 
 ### Upsert logic
 
@@ -419,7 +404,7 @@ trungtamtrithuc/
 │   ├── config.py                # Env vars (Voyage, Qdrant, Claude, Memory, Proxy)
 │   ├── schemas.py               # ChatRequest/Response, Ingest, KnowledgeSearch
 │   ├── api/
-│   │   ├── chat.py              # POST /api/chat/  (+ background memory extract)
+│   │   ├── chat.py              # POST /api/chat/
 │   │   └── ingest.py            # POST /api/ingest/{file,video/file,youtube,youtube-playlist}
 │   ├── core/
 │   │   ├── chunker.py           # Heading-aware chunking (tiktoken cl100k_base)
@@ -427,15 +412,14 @@ trungtamtrithuc/
 │   │   ├── voyage_embed.py      # Voyage embedder (query vs document)
 │   │   ├── qdrant_store.py      # QdrantStore (R/W) + VMediaReadOnlyStore
 │   │   ├── session_memory.py    # File-backed conversation history
-│   │   ├── entity_schema.py     # MemoryRecord / ExtractedMemory
+│   │   ├── entity_schema.py     # MemoryRecord (Pydantic)
 │   │   └── entity_memory.py     # Upsert (dedup/conflict) + hybrid retrieve
 │   ├── ingestion/
 │   │   ├── doc_parser.py        # 3-tier parser + typo fix
 │   │   ├── doc_pipeline.py      # Table detect + LLM describe + Vision+context
 │   │   ├── video_pipeline.py    # YouTube + local + playlist
 │   │   ├── video_transcriber.py # Whisper wrapper
-│   │   ├── youtube_fetcher.py   # youtube-transcript-api + proxy rotation
-│   │   └── entity_extractor.py  # Claude Haiku extract memory + summary
+│   │   └── youtube_fetcher.py   # youtube-transcript-api + proxy rotation
 │   └── rag/
 │       ├── chain.py             # Retrieve → rerank → generate → parse suggestions
 │       ├── retriever.py         # Multi-source parallel search
@@ -507,7 +491,6 @@ python scripts/init_memory_collection.py
 | Claude Vision | Docling fail / bảng có màu | ~$0.002/trang |
 | LLM describe table | Bảng có dữ liệu | ~$0.001/bảng |
 | Voyage embed | Luôn chạy | ~$0.0001/chunk |
-| Entity extract (Haiku) | Mỗi 4 turn | ~$0.0005/lần |
 | Claude Sonnet 4 answer | Mỗi câu trả lời | ~$0.003-0.015/lần |
 | **File text thuần** (Docling OK) | | **~$0.001** |
 | **File phức tạp** (Vision + LLM) | | **~$0.005-0.01** |
@@ -521,7 +504,7 @@ python scripts/init_memory_collection.py
 |------------|-----------|
 | Backend | Python 3.12, FastAPI, Uvicorn |
 | LLM trả lời | Claude Sonnet 4 (`claude-sonnet-4-20250514`) |
-| LLM Vision / Extract / Describe | Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) |
+| LLM Vision / Describe table | Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) |
 | Embedding | Voyage AI `voyage-3` — 1024-dim |
 | Vector DB | Qdrant Cloud (2 cluster: main + vmedia read-only) |
 | PDF parser | Docling (IBM) → Claude Vision → pdfplumber |
@@ -567,25 +550,20 @@ POST /api/chat/
       → Claude Sonnet 4.generate()
       → split "---GỢI Ý---" → (answer, suggestions[3])
   → memory.add_turn(session_id, user_msg, answer)
-  → Nếu turn_count % 4 == 0:
-      background_task:
-        extract_memories (Haiku) → upsert EntityMemory
 ```
 
 ### 4. Entity Memory lifecycle
 
 ```
-Background extract (mỗi 4 turn):
-  turns → Haiku → [ExtractedMemory] + Summary
-  For each record:
-    vec = embed(text)
-    search similar (user_id, category, active)
-    ├─ ≥0.88 → touch duplicate
-    ├─ 0.75-0.88 → supersede old + insert
-    └─ <0.75 → insert
+Upsert (khi có nguồn ghi memory riêng):
+  vec = embed(text)
+  search similar (user_id, category, active)
+  ├─ ≥0.88 → touch duplicate
+  ├─ 0.75-0.88 → supersede old + insert
+  └─ <0.75 → insert
   Summary: luôn supersede summary cũ cùng session
 
-Retrieve (sẽ dùng trong /chat nâng cao):
+Retrieve (dùng trong /chat nâng cao):
   near = search(user_id, recent_sessions)
   longterm = search(user_id, persistent+preference)
   merged → rerank (semantic + recency + session + freq)
