@@ -102,6 +102,17 @@ cp .env.example .env            # điền API keys (xem bảng bên dưới)
 | `RERANK_TOP_K` | `5` | Số hit sau rerank |
 | `API_HOST` / `API_PORT` | `0.0.0.0` / `8000` | |
 
+### Conversation Memory (Hybrid 3 tầng)
+
+| Biến | Mặc định | Mô tả |
+|------|----------|-------|
+| `CONV_COLLECTION` | `ttt_memory` | Qdrant collection lưu conversation pairs |
+| `CONV_WINDOW_TURNS` | `3` | Số pair (user+bot) giữ trong sliding window |
+| `CONV_SUMMARY_MAX_TOKENS` | `400` | Giới hạn rolling summary |
+| `CONV_RECALL_TOP_K` | `5` | Số pair Qdrant recall mỗi lần |
+| `CONV_RECALL_MIN_SCORE` | `0.3` | Score tối thiểu để recall (Voyage cosine) |
+| `CONV_REWRITE_MIN_LEN` | `40` | Query ngắn hơn ngưỡng này sẽ được rewrite |
+
 ### Collection READ-ONLY (vmedia)
 
 | Biến | Mô tả |
@@ -160,7 +171,10 @@ trungtamtrithuc/
 │   │   ├── claude_client.py    # Anthropic client wrapper
 │   │   ├── voyage_embed.py     # Voyage AI embedder
 │   │   ├── qdrant_store.py     # Qdrant R/W + VMediaReadOnlyStore
-│   │   └── session_memory.py   # File-backed conversation history
+│   │   ├── session_memory.py   # Sliding window + rolling summary (file-backed)
+│   │   ├── conv_memory.py      # Vector recall cross-session (Qdrant ttt_memory)
+│   │   ├── conv_summarizer.py  # Rolling summary updater (Claude Haiku)
+│   │   └── conv_query_rewriter.py  # Zero-anaphora query rewrite (Haiku)
 │   ├── ingestion/
 │   │   ├── doc_parser.py       # 3-tier PDF parsing + typo fix
 │   │   ├── doc_pipeline.py     # Table detect/process + embed + store
@@ -173,7 +187,14 @@ trungtamtrithuc/
 │       ├── reranker.py         # Cross-encoder reranker
 │       └── prompt_builder.py   # System prompt + context + table_data
 ├── web/                        # Static frontend (HTML/CSS/JS)
-├── data/{uploads,logs}/        # Runtime (auto-created)
+├── data/{uploads,logs,sessions}/   # Runtime (auto-created)
+├── scripts/
+│   ├── diag_conv_memory.py     # Diag Qdrant ttt_memory: count theo user, test retrieve
+│   ├── clean_poisoned_pairs.py # Dọn pair "không tìm thấy" gây feedback loop
+│   ├── check_memory_collection.py  # Show schema + sample payload ttt_memory
+│   ├── seed_two_users.py       # Seed 2 test user vào Qdrant
+│   ├── test_fix_e2e.py         # E2E test cross-session recall + tính toán
+│   └── test_conversation_memory.py  # Kịch bản test 3 tầng hybrid memory
 ├── docs/{PROJECT_OVERVIEW,INTEGRATION}.md
 ├── requirements.txt
 ├── run.sh
@@ -246,10 +267,13 @@ curl -X POST http://localhost:8000/api/chat/ \
   -d '{
     "message": "Tóm tắt kế hoạch truyền thông nội bộ",
     "session_id": "uuid-v4",
+    "user_id": "u-001",
     "domain": "marketing",
     "history": []
   }'
 ```
+
+`user_id` định danh người dùng cho conversation memory cross-session. Nếu bỏ trống, hệ thống dùng `session_id` làm fallback (memory không chia sẻ giữa các session).
 
 `domain` hỗ trợ: `mặc định`, `bim`, `mep`, `kết cấu`, `marketing`, `pháp lý`, `sản xuất` (hoặc tuỳ ý — sẽ dùng prompt tổng quát).
 
@@ -283,12 +307,77 @@ const res = await fetch('/api/chat/', {
   body: JSON.stringify({
     message: 'câu hỏi',
     session_id: sessionId,
+    user_id: 'u-001',
     domain: 'mặc định',
     history: [],
   }),
 });
 const {answer, sources, suggested_questions} = await res.json();
 ```
+
+### `DELETE /api/chat/memory/user/{user_id}` — Xoá toàn bộ conv memory của 1 user
+
+Dọn sạch mọi pair của user trong Qdrant `ttt_memory`. Dùng cho GDPR / reset test data.
+
+### `DELETE /api/chat/memory/session/{session_id}` — Xoá 1 session
+
+Xoá file session JSON + tất cả pair cùng `session_id` trong Qdrant.
+
+## Conversation Memory (Hybrid 3 tầng)
+
+Mỗi lượt chat đi qua 3 tầng memory, mỗi tầng bắt 1 scope khác nhau:
+
+| Tầng | Lưu ở đâu | Scope | Chứa gì |
+|------|-----------|-------|---------|
+| 1 — Sliding window | File JSON `data/sessions/{sid}.json` | Trong cùng session | 3 pair gần nhất (config `CONV_WINDOW_TURNS`) |
+| 2 — Rolling summary | Cùng file JSON, field `summary` | Trong cùng session | Haiku tóm tắt các pair đã rớt khỏi window |
+| 3 — Vector recall | Qdrant `ttt_memory` | Cross-session theo `user_id` | Mọi pair (user+bot) đã upsert, search bằng Voyage embed |
+
+Khi có query mới:
+
+1. Lấy sliding window + summary của session hiện tại.
+2. Song song: RAG doc retrieval + Qdrant recall pair cùng `user_id` (score ≥ `CONV_RECALL_MIN_SCORE`).
+3. Build prompt XML: `<retrieved_documents>` + `<session_summary>` + `<user_context>` (pairs).
+4. Sau khi trả lời: upsert pair mới vào Qdrant, pop overflow + update summary.
+
+**Guard chống feedback loop**: pair mà bot trả "không tìm thấy / không biết" sẽ KHÔNG upsert vào Qdrant (tránh recall lại chính câu "không biết" cũ).
+
+### Test nhanh
+
+```bash
+source venv/bin/activate
+
+# Xem collection ttt_memory
+python scripts/check_memory_collection.py
+
+# Diag: count theo user + test retrieve
+python scripts/diag_conv_memory.py
+
+# Seed 2 user giả
+python scripts/seed_two_users.py
+
+# Dọn pair "không tìm thấy" đã ô nhiễm
+python scripts/clean_poisoned_pairs.py --apply
+```
+
+Trên UI `chat.html`: dropdown "User đang test" cho phép switch giữa `test-user-1` / `test-user-2`. Mỗi user có sessions riêng lưu ở localStorage (`ttt_sessions_<userId>`).
+
+---
+
+## Prompt Engineering
+
+`app/rag/prompt_builder.py` áp dụng best practices Anthropic cho Claude 4+:
+
+- **XML tags** (`<retrieved_documents>`, `<user_context>`, `<session_summary>`) thay cho markdown headers → parse boundary chắc chắn.
+- **Positive framing** — mô tả "Bạn được phép X" thay vì "Không làm Y". Mô hình bám rule tốt hơn.
+- **Quote-first grounding** — yêu cầu Claude ngầm xác định đoạn tài liệu liên quan trước khi tổng hợp (giảm hallucination).
+- **Reasoning lane** — cho phép suy luận khi kết hợp tài liệu với dữ kiện user đã khai (vd tính `80tr / 6 video = 13,3 tr/video`).
+- **Vietnamese tone** — xưng "tôi", gọi "bạn", giữ thuật ngữ EN, format số theo VN (`1.000.000 đồng`, `13,3 triệu`).
+- **Follow-up suggestion** — rút trực tiếp từ `<retrieved_documents>` vừa dùng, không generic theo domain.
+
+Ref: [Anthropic XML tags guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags) · [Claude 4 best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices)
+
+---
 
 ## Chi phí tham khảo
 

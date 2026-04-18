@@ -1,108 +1,192 @@
+"""Prompt builder theo best practice của Anthropic (Claude Sonnet 4+):
+  - XML tags (<retrieved_documents>, <user_context>, <session_summary>)
+    thay cho markdown headers → Claude parse boundary chắc chắn hơn.
+  - Positive framing: mô tả "làm gì" thay vì "không làm gì".
+  - Quote-first grounding: yêu cầu xác định đoạn liên quan trước khi tổng hợp.
+  - Follow-up suggestions bám sát tài liệu vừa truy xuất (không generic).
+  - Tone tiếng Việt rõ ràng: lịch sự thân thiện, xưng "tôi" - gọi "bạn",
+    giữ nguyên thuật ngữ chuyên ngành EN, format số kiểu VN.
+
+Ref: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/use-xml-tags
+Ref: https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices
+"""
 from __future__ import annotations
 
 from app.rag.retriever import Hit
 
-DOMAIN_PRESETS: dict[str, str] = {
+# ---------------------------------------------------------------- personas
+# Mỗi persona là 1-2 câu mô tả vai trò + domain vocabulary. Giữ ngắn:
+# rule chi tiết đã chuẩn hoá ở _BASE_SUFFIX cho mọi domain.
+DOMAIN_PERSONAS: dict[str, str] = {
     "mặc định": (
-        "Bạn là trợ lý tri thức chuyên nghiệp. Trả lời chính xác, đầy đủ bằng tiếng Việt. "
-        "Luôn đính kèm nguồn ở cuối câu trả lời trong mục 'Nguồn:'. Không bịa thông tin."
+        "Bạn là trợ lý tri thức chuyên nghiệp, trả lời câu hỏi dựa trên "
+        "tài liệu được truy xuất và dữ kiện người dùng đã cung cấp."
     ),
     "bim": (
         "Bạn là chuyên gia BIM (Building Information Modeling) cao cấp. "
-        "Trả lời bằng tiếng Việt với thuật ngữ chuyên ngành BIM: LOD (Level of Development), "
-        "clash detection, model coordination, Revit, Navisworks, IFC, CDE (Common Data Environment), "
-        "BIM Execution Plan (BEP), federated model, point cloud. "
-        "Cấu trúc câu trả lời theo quy trình rõ ràng: 1) Giải thích khái niệm, "
-        "2) Quy trình/bước thực hiện, 3) Lưu ý thực tế. "
-        "Nếu không có tài liệu liên quan, nói rõ ràng. Không bịa đặt. "
-        "Luôn có mục 'Nguồn:' ở cuối."
+        "Thuật ngữ thường dùng: LOD, clash detection, model coordination, "
+        "Revit, Navisworks, IFC, CDE, BEP, federated model, point cloud. "
+        "Cấu trúc câu trả lời theo 3 phần: (1) khái niệm, (2) quy trình/bước, "
+        "(3) lưu ý thực tế."
     ),
     "mep": (
         "Bạn là kỹ sư MEP (Mechanical, Electrical, Plumbing) cao cấp. "
-        "Trả lời bằng tiếng Việt với thuật ngữ chuyên ngành: HVAC, chiller, AHU, FCU, "
-        "hệ thống PCCC (phòng cháy chữa cháy), sprinkler, riser diagram, load calculation, "
-        "busduct, cable tray, ELV (hệ thống điện nhẹ), BMS, cấp thoát nước, bơm tăng áp. "
-        "Cấu trúc câu trả lời: 1) Nguyên lý hoạt động, 2) Tiêu chuẩn áp dụng (TCVN, ASHRAE, NFPA...), "
-        "3) Lưu ý thi công/vận hành. "
-        "Nếu không có tài liệu liên quan, nói rõ ràng. Không bịa đặt. "
-        "Luôn có mục 'Nguồn:' ở cuối."
+        "Thuật ngữ: HVAC, chiller, AHU, FCU, hệ PCCC, sprinkler, riser diagram, "
+        "load calculation, busduct, cable tray, ELV, BMS, bơm tăng áp. "
+        "Cấu trúc câu trả lời: (1) nguyên lý, (2) tiêu chuẩn áp dụng "
+        "(TCVN, ASHRAE, NFPA…), (3) lưu ý thi công/vận hành."
     ),
     "kết cấu": (
-        "Bạn là kỹ sư kết cấu (Structural Engineer) cao cấp. "
-        "Trả lời bằng tiếng Việt với thuật ngữ chuyên ngành: kết cấu BTCT (bê tông cốt thép), "
-        "kết cấu thép, móng cọc, móng băng, dầm, cột, sàn, vách, tải trọng (tĩnh tải, hoạt tải, "
-        "tải gió, tải động đất), TCVN, Eurocode, ACI, mô hình ETABS/SAP2000, biểu đồ nội lực. "
-        "Cấu trúc câu trả lời: 1) Phân tích kết cấu, 2) Tiêu chuẩn thiết kế áp dụng, "
-        "3) Lưu ý thi công và kiểm tra chất lượng. "
-        "Nếu không có tài liệu liên quan, nói rõ ràng. Không bịa đặt. "
-        "Luôn có mục 'Nguồn:' ở cuối."
+        "Bạn là kỹ sư kết cấu cao cấp. Thuật ngữ: BTCT, móng cọc, móng băng, "
+        "dầm, cột, sàn, vách, tải trọng (tĩnh/hoạt/gió/động đất), TCVN, Eurocode, "
+        "ACI, ETABS, SAP2000, biểu đồ nội lực. "
+        "Cấu trúc: (1) phân tích kết cấu, (2) tiêu chuẩn thiết kế, "
+        "(3) lưu ý thi công và kiểm tra chất lượng."
     ),
     "marketing": (
-        "Bạn là chuyên gia Marketing chiến lược. "
-        "Trả lời bằng tiếng Việt với thuật ngữ chuyên ngành: brand positioning, target audience, "
-        "marketing mix (4P/7P), digital marketing, SEO/SEM, content marketing, conversion rate, "
-        "customer journey, KPI, ROI, A/B testing, funnel, lead generation, CRM. "
-        "Cấu trúc câu trả lời: 1) Phân tích vấn đề/chiến lược, 2) Giải pháp cụ thể, "
-        "3) Chỉ số đo lường hiệu quả. "
-        "Nếu không có tài liệu liên quan, nói rõ ràng. Không bịa đặt. "
-        "Luôn có mục 'Nguồn:' ở cuối."
+        "Bạn là chuyên gia Marketing chiến lược. Thuật ngữ: brand positioning, "
+        "target audience, marketing mix (4P/7P), digital marketing, SEO/SEM, "
+        "content marketing, conversion rate, customer journey, KPI, ROI, "
+        "A/B testing, funnel, lead generation, CRM. "
+        "Cấu trúc: (1) phân tích vấn đề, (2) giải pháp cụ thể, "
+        "(3) chỉ số đo lường hiệu quả."
     ),
     "pháp lý": (
-        "Bạn là chuyên gia pháp lý chuyên sâu. "
-        "Trả lời bằng tiếng Việt dựa trên văn bản pháp luật và quy định hiện hành: "
-        "Luật Xây dựng, Luật Đầu tư, Luật Doanh nghiệp, Luật Lao động, Bộ luật Dân sự, "
-        "các Nghị định, Thông tư hướng dẫn. "
-        "Cấu trúc câu trả lời: 1) Căn cứ pháp lý (điều khoản cụ thể), "
-        "2) Giải thích/phân tích, 3) Lưu ý thực thi. "
-        "Luôn trích dẫn điều khoản cụ thể (Điều X, Khoản Y). "
-        "Nếu không có tài liệu liên quan, nói rõ ràng. Không bịa đặt. "
-        "Luôn có mục 'Nguồn:' ở cuối."
+        "Bạn là chuyên gia pháp lý. Dẫn chiếu văn bản pháp luật Việt Nam: "
+        "Luật Xây dựng, Luật Đầu tư, Luật Doanh nghiệp, Luật Lao động, "
+        "Bộ luật Dân sự, các Nghị định / Thông tư. "
+        "Cấu trúc: (1) căn cứ pháp lý (Điều X, Khoản Y), (2) giải thích, "
+        "(3) lưu ý thực thi. Luôn trích dẫn điều khoản cụ thể."
     ),
     "sản xuất": (
-        "Bạn là chuyên gia quản lý sản xuất (Production/Manufacturing). "
-        "Trả lời bằng tiếng Việt với thuật ngữ chuyên ngành: Lean Manufacturing, 5S, Kaizen, "
-        "OEE (Overall Equipment Effectiveness), cycle time, takt time, bottleneck, "
-        "QC/QA, Six Sigma, PDCA, SOP (quy trình vận hành chuẩn), BOM (Bill of Materials), "
-        "MRP, capacity planning, yield rate, defect rate. "
-        "Cấu trúc câu trả lời: 1) Phân tích hiện trạng/vấn đề, 2) Quy trình cải tiến, "
-        "3) Chỉ số đánh giá KPI. "
-        "Nếu không có tài liệu liên quan, nói rõ ràng. Không bịa đặt. "
-        "Luôn có mục 'Nguồn:' ở cuối."
+        "Bạn là chuyên gia quản lý sản xuất. Thuật ngữ: Lean Manufacturing, "
+        "5S, Kaizen, OEE, cycle time, takt time, bottleneck, QC/QA, Six Sigma, "
+        "PDCA, SOP, BOM, MRP, capacity planning, yield rate, defect rate. "
+        "Cấu trúc: (1) phân tích hiện trạng, (2) quy trình cải tiến, "
+        "(3) KPI đánh giá."
     ),
 }
 
-_BASE_SUFFIX = (
-    "\n\nQuy tắc bắt buộc:\n"
-    "- Chỉ sử dụng thông tin từ ngữ cảnh được cung cấp.\n"
-    "- Nếu không có thông tin liên quan, nói rõ: 'Tôi không tìm thấy thông tin về vấn đề này trong cơ sở tri thức.'\n"
-    "- Không bịa đặt, không suy đoán ngoài dữ liệu.\n"
-    "- Khi trích dẫn nguồn trong câu trả lời, ghi rõ TÊN tài liệu thay vì chỉ ghi số. "
-    "Ví dụ: viết '(Tổng quan về Teams)' thay vì '[NGUỒN 1]'.\n"
-    "- Cuối câu trả lời PHẢI có mục 'Nguồn:' liệt kê tên đầy đủ các tài liệu đã sử dụng, kèm link nếu có.\n\n"
-    "Ngoại lệ quan trọng:\n"
-    "- Nếu người dùng gửi tin nhắn giao tiếp thông thường (chào hỏi, cảm ơn, tạm biệt, hỏi thăm, "
-    "giới thiệu bản thân, trò chuyện xã giao...) mà KHÔNG yêu cầu tra cứu kiến thức: "
-    "hãy trả lời tự nhiên, thân thiện, KHÔNG thêm mục 'Nguồn:' và KHÔNG thêm '---GỢI Ý---'.\n\n"
-    "Sau phần 'Nguồn:' (chỉ khi có), LUÔN thêm mục gợi ý câu hỏi theo đúng định dạng sau:\n"
-    "---GỢI Ý---\n"
-    "1. <câu hỏi gợi ý 1>\n"
-    "2. <câu hỏi gợi ý 2>\n"
-    "3. <câu hỏi gợi ý 3>\n\n"
-    "Yêu cầu cho câu hỏi gợi ý:\n"
-    "- Phải liên quan trực tiếp đến kiến thức mà người dùng đang hỏi trong cuộc hội thoại.\n"
-    "- Giúp người dùng khám phá sâu hơn hoặc mở rộng chủ đề đang trao đổi.\n"
-    "- Ngắn gọn, rõ ràng, tự nhiên như câu hỏi thật sự của người dùng."
-)
+# ---------------------------------------------------------------- base rules
+# Quy tắc chung cho mọi domain. Đặt ở SYSTEM prompt cùng persona để Claude
+# cache được (persona + rules là stable cross-turn).
+_BASE_RULES = """
+<language_style>
+- Trả lời bằng tiếng Việt, lịch sự nhưng thân thiện. Xưng "tôi", gọi người dùng là "bạn".
+- Giữ nguyên thuật ngữ chuyên ngành tiếng Anh khi không có bản dịch thông dụng (BIM, LOD, HVAC, KPI…).
+- Định dạng số theo kiểu Việt Nam: dấu chấm phân cách hàng nghìn, dấu phẩy cho thập phân (vd: 1.000.000 đồng, 13,3 triệu).
+</language_style>
+
+<reasoning_process>
+Trước khi viết câu trả lời, hãy thầm (không cần in ra):
+1. Xác định các đoạn trong <retrieved_documents> liên quan trực tiếp tới câu hỏi.
+2. Xác định dữ kiện trong <user_context> có thể dùng kết hợp.
+3. Nếu câu hỏi cần tính toán hoặc tổng hợp nhiều nguồn: dùng cả tài liệu và dữ kiện user để suy luận. Đây là suy luận hợp lệ.
+</reasoning_process>
+
+<grounding_rules>
+Nguồn thông tin hợp lệ để trả lời gồm:
+(a) các đoạn trong <retrieved_documents> — tài liệu được truy xuất cho câu hỏi này.
+(b) dữ kiện trong <user_context> — thông tin user đã xác nhận rõ ràng trong hội thoại (tên, team, ngân sách, sở thích, mục tiêu…).
+
+Bạn được phép:
+- Trả lời dựa trên (a), (b), hoặc kết hợp cả hai.
+- Suy luận, tính toán, ước lượng dựa trên dữ kiện user đã khai báo kể cả khi tài liệu không có (vd: user nói "ngân sách 80 triệu cho 6 video" → trả lời "80 / 6 ≈ 13,3 triệu/video"). Đây KHÔNG phải bịa đặt.
+- Tự tin khẳng định dữ kiện user đã nói — coi đây là sự thật đã xác lập, không phải suy đoán.
+
+Bạn chỉ nói "Tôi không tìm thấy thông tin này" khi CẢ <retrieved_documents> LẪN <user_context> đều không chứa dữ liệu cần thiết cho câu hỏi.
+
+Chỉ trả lời dựa trên thông tin trong hai nguồn trên. Không thêm số liệu tài liệu không có; không bịa fact user chưa từng nói.
+</grounding_rules>
+
+<citation_rules>
+- Trong phần nội dung: trích nguồn bằng TÊN tài liệu (vd: "(CHÂN DUNG ĐỐI TƯỢNG...)", không dùng "[NGUỒN 1]").
+- Nếu câu trả lời có dùng tài liệu: kết thúc bằng đúng 1 dòng "Nguồn:" liệt kê tên tài liệu, kèm link nếu có.
+- Nếu câu trả lời chỉ dùng dữ kiện user (không dùng tài liệu): ghi "Nguồn: Thông tin bạn đã cung cấp trong cuộc trò chuyện."
+- Với câu xã giao (chào hỏi, cảm ơn, giới thiệu bản thân, trò chuyện thường): trả lời tự nhiên, BỎ mục "Nguồn:" và BỎ phần "---GỢI Ý---".
+</citation_rules>
+
+<followup_suggestions>
+Khi câu trả lời có nội dung kiến thức, sau "Nguồn:" thêm đúng khối sau:
+---GỢI Ý---
+1. <câu hỏi 1>
+2. <câu hỏi 2>
+3. <câu hỏi 3>
+
+Yêu cầu câu hỏi gợi ý:
+- Rút ra trực tiếp từ nội dung trong <retrieved_documents> vừa dùng, hoặc từ chủ đề user đang trao đổi — không phải câu hỏi generic trong ngành.
+- Gợi ra hướng đào sâu hoặc mở rộng tự nhiên từ câu trả lời vừa viết.
+- Ngắn gọn, đúng như một câu hỏi thật của user (xưng "tôi", không phải bot nói về bot).
+</followup_suggestions>
+"""
 
 
 def build_system_prompt(expert_domain: str | None = None) -> str:
+    """System prompt ổn định cross-turn (Claude cache được)."""
     domain = (expert_domain or "mặc định").lower().strip()
-    base = DOMAIN_PRESETS.get(domain, f"Bạn là chuyên gia về '{expert_domain}'. Trả lời bằng tiếng Việt, chính xác, có nguồn gốc rõ ràng.")
-    return base + _BASE_SUFFIX
+    persona = DOMAIN_PERSONAS.get(
+        domain,
+        f"Bạn là chuyên gia về '{expert_domain}'. Trả lời tiếng Việt chính xác, có nguồn rõ ràng.",
+    )
+    return persona.strip() + "\n" + _BASE_RULES.strip()
 
 
+# ---------------------------------------------------------------- user_context
+def _fmt_relative_time(created_at: int) -> str:
+    import time as _t
+    if not created_at:
+        return ""
+    delta = int(_t.time()) - int(created_at)
+    if delta < 3600:
+        return f"{max(1, delta // 60)} phút trước"
+    if delta < 86400:
+        return f"{delta // 3600} giờ trước"
+    return f"{delta // 86400} ngày trước"
+
+
+def build_conversation_block(summary: str, recall_pairs: list[dict]) -> str:
+    """Block ngữ cảnh hội thoại — để inject vào system prompt.
+
+    Dùng XML tags để Claude parse boundary chắc chắn. Nội dung gồm:
+      - <session_summary>: rolling summary (các lượt rớt khỏi sliding window)
+      - <user_context>: fact user đã khai từ các session khác (vector recall)
+
+    Trả về "" nếu rỗng cả 2.
+    """
+    parts: list[str] = []
+
+    if summary and summary.strip():
+        parts.append(
+            "<session_summary>\n"
+            "Đây là tóm tắt các lượt hội thoại TRƯỚC trong phiên hiện tại "
+            "(đã rớt khỏi sliding window). Coi đây là thông tin đã được xác lập.\n"
+            f"{summary.strip()}\n"
+            "</session_summary>"
+        )
+
+    if recall_pairs:
+        lines = [
+            "<user_context>",
+            "Đây là các trao đổi trước giữa user này và bạn "
+            "(truy xuất theo độ tương đồng ngữ nghĩa với câu hỏi hiện tại).",
+            "Coi các dữ kiện user khai báo trong đây là sự thật đã xác lập — "
+            "được phép dùng để trả lời và suy luận.",
+            "",
+        ]
+        for i, p in enumerate(recall_pairs, 1):
+            ts = _fmt_relative_time(p.get("created_at", 0))
+            tag = f"[#{i}" + (f" — {ts}" if ts else "") + "]"
+            lines.append(tag)
+            lines.append(p.get("text", "").strip())
+            lines.append("")
+        lines.append("</user_context>")
+        parts.append("\n".join(lines))
+
+    return "\n\n".join(parts)
+
+
+# ---------------------------------------------------------------- documents
 def _parse_timestamp(ts) -> tuple[int | None, str | None]:
-    """Parse timestamp to (seconds, 'MM:SS' string)."""
     if ts is None:
         return None, None
     ts_str = str(ts)
@@ -118,7 +202,6 @@ def _parse_timestamp(ts) -> tuple[int | None, str | None]:
 
 
 def _build_youtube_url_with_timestamp(base_url: str, seconds: int | None) -> str:
-    """Append ?t=XXs to YouTube URL for deep linking."""
     if not base_url or seconds is None or seconds <= 0:
         return base_url or ""
     sep = "&" if "?" in base_url else "?"
@@ -126,55 +209,78 @@ def _build_youtube_url_with_timestamp(base_url: str, seconds: int | None) -> str
 
 
 def build_context_block(hits: list[Hit]) -> tuple[str, list[dict]]:
-    """Return (context_markdown, deduplicated source_mapping).
+    """Build <retrieved_documents> block (XML) + dedup source mapping cho FE.
 
-    Context block contains all hits (with numbering) for the LLM.
-    Source mapping is deduplicated by (title + url), keeping the highest score,
-    and merging timestamps/pages from different chunks of the same source.
+    XML cho phép Claude parse boundary chính xác giữa các <document>.
     """
-    lines: list[str] = []
+    if not hits:
+        return "", []
 
-    # Build context for the LLM (all hits, not deduplicated)
+    doc_parts: list[str] = ["<retrieved_documents>"]
+
     for n, hit in enumerate(hits, 1):
         payload = hit.payload
-        title = payload.get("title") or payload.get("source_name") or payload.get("filename") or payload.get("source", "Không rõ nguồn")
+        title = (
+            payload.get("title")
+            or payload.get("source_name")
+            or payload.get("filename")
+            or payload.get("source", "Không rõ nguồn")
+        )
         page = payload.get("page")
         raw_ts = payload.get("start") or payload.get("timestamp")
-        base_url = payload.get("url") or payload.get("source") or payload.get("youtube_url")
+        base_url = (
+            payload.get("url") or payload.get("source") or payload.get("youtube_url")
+        )
         ts_secs, ts_display = _parse_timestamp(raw_ts)
 
-        meta_parts = [f"[NGUỒN {n}] {title}"]
+        source_parts = [title]
         if base_url:
-            meta_parts.append(_build_youtube_url_with_timestamp(base_url, ts_secs))
+            source_parts.append(_build_youtube_url_with_timestamp(base_url, ts_secs))
         if page is not None:
-            meta_parts.append(f"trang {page}")
+            source_parts.append(f"trang {page}")
         if ts_display is not None:
-            meta_parts.append(ts_display)
+            source_parts.append(ts_display)
+        source_line = " — ".join(source_parts)
 
-        lines.append(" — ".join(meta_parts))
-        lines.append(hit.text)
-        # Include table_data if present (original Markdown table for precise answers)
+        doc_parts.append(f'  <document index="{n}">')
+        doc_parts.append(f"    <source>{source_line}</source>")
+        doc_parts.append("    <content>")
+        doc_parts.append(hit.text.strip())
+
         table_data = payload.get("table_data", "")
         if table_data:
-            lines.append("")
-            lines.append("Dữ liệu bảng chi tiết:")
-            lines.append(table_data)
-        lines.append("")
+            doc_parts.append("")
+            doc_parts.append("Dữ liệu bảng chi tiết:")
+            doc_parts.append(table_data.strip())
 
-    # Build deduplicated source mapping for the frontend
-    seen: dict[str, dict] = {}  # key: "title||base_url"
+        doc_parts.append("    </content>")
+        doc_parts.append("  </document>")
+
+    doc_parts.append("</retrieved_documents>")
+
+    # --- dedup source mapping cho FE ---
+    seen: dict[str, dict] = {}
     for hit in hits:
         payload = hit.payload
-        title = payload.get("title") or payload.get("source_name") or payload.get("filename") or payload.get("source", "Không rõ nguồn")
+        title = (
+            payload.get("title")
+            or payload.get("source_name")
+            or payload.get("filename")
+            or payload.get("source", "Không rõ nguồn")
+        )
         page = payload.get("page")
         raw_ts = payload.get("start") or payload.get("timestamp")
-        base_url = payload.get("url") or payload.get("source") or payload.get("youtube_url") or ""
+        base_url = (
+            payload.get("url")
+            or payload.get("source")
+            or payload.get("youtube_url")
+            or ""
+        )
         ts_secs, ts_display = _parse_timestamp(raw_ts)
 
-        dedup_key = f"{title}||{base_url}"
-
-        if dedup_key not in seen:
-            seen[dedup_key] = {
+        key = f"{title}||{base_url}"
+        if key not in seen:
+            seen[key] = {
                 "source_type": hit.source_type,
                 "title": title,
                 "url": _build_youtube_url_with_timestamp(base_url, ts_secs),
@@ -185,13 +291,14 @@ def build_context_block(hits: list[Hit]) -> tuple[str, list[dict]]:
                 "score": hit.score,
                 "positions": [],
             }
-        entry = seen[dedup_key]
-        # Keep highest score
+        entry = seen[key]
         if hit.score > entry["score"]:
             entry["score"] = hit.score
-        # Collect all positions (timestamps / pages)
         if ts_display is not None:
-            pos = {"timestamp": ts_display, "url": _build_youtube_url_with_timestamp(base_url, ts_secs)}
+            pos = {
+                "timestamp": ts_display,
+                "url": _build_youtube_url_with_timestamp(base_url, ts_secs),
+            }
             if pos not in entry["positions"]:
                 entry["positions"].append(pos)
         if page is not None:
@@ -201,17 +308,22 @@ def build_context_block(hits: list[Hit]) -> tuple[str, list[dict]]:
 
     mapping: list[dict] = []
     for idx, entry in enumerate(seen.values(), 1):
-        # Use the first position's URL (with timestamp) as the main link
-        first_pos_url = entry["positions"][0]["url"] if entry["positions"] and "url" in entry["positions"][0] else entry["base_url"]
-        mapping.append({
-            "index": idx,
-            "source_type": entry["source_type"],
-            "title": entry["title"],
-            "url": first_pos_url or entry["base_url"],
-            "page": entry.get("page"),
-            "timestamp": entry.get("timestamp"),
-            "score": entry["score"],
-            "positions": entry["positions"],
-        })
+        first_pos_url = (
+            entry["positions"][0]["url"]
+            if entry["positions"] and "url" in entry["positions"][0]
+            else entry["base_url"]
+        )
+        mapping.append(
+            {
+                "index": idx,
+                "source_type": entry["source_type"],
+                "title": entry["title"],
+                "url": first_pos_url or entry["base_url"],
+                "page": entry.get("page"),
+                "timestamp": entry.get("timestamp"),
+                "score": entry["score"],
+                "positions": entry["positions"],
+            }
+        )
 
-    return "\n".join(lines), mapping
+    return "\n".join(doc_parts), mapping

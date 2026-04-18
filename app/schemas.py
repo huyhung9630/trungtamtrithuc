@@ -13,6 +13,10 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     session_id: str = Field(default="default")
+    user_id: str | None = Field(
+        default=None,
+        description="Định danh user cho conversation memory. Nếu trống dùng session_id.",
+    )
     history: list[ChatMessage] = Field(default_factory=list)
     domain: str = Field(default="general")
 

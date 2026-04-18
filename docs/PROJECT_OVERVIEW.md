@@ -255,15 +255,33 @@ User query
     │
     ▼
 [CONTEXT BUILD] prompt_builder.build_context_block
-    Mỗi hit: [NGUỒN N] title — url — trang/timestamp
-             + chunk text
-             + "Dữ liệu bảng chi tiết:" + table_data (nếu có)
+    XML: <retrieved_documents>
+           <document index="1">
+             <source>title — url — trang/timestamp</source>
+             <content>chunk text + table_data (nếu có)</content>
+           </document>
+           ...
+         </retrieved_documents>
     Source mapping (dedup theo title+url, merge positions)
     │
     ▼
-[PROMPT] system = DOMAIN_PRESETS[domain] + _BASE_SUFFIX
-    DOMAIN_PRESETS: bim | mep | kết cấu | marketing | pháp lý | sản xuất | mặc định
-    _BASE_SUFFIX: rules + yêu cầu "Nguồn:" + "---GỢI Ý---"
+[CONV BUILD] prompt_builder.build_conversation_block(summary, recall_pairs)
+    XML: <session_summary>...</session_summary>
+         <user_context>
+           [#1 — 2 ngày trước]
+           USER: ... | BOT: ...
+           [#2 ...]
+         </user_context>
+    │
+    ▼
+[PROMPT] system = DOMAIN_PERSONAS[domain] + _BASE_RULES + conv_block
+    DOMAIN_PERSONAS: bim | mep | kết cấu | marketing | pháp lý | sản xuất | mặc định
+    _BASE_RULES (positive framing, XML sections):
+      <language_style>   tiếng Việt, xưng "tôi"/gọi "bạn", format số VN
+      <reasoning_process> quote-first grounding (ngầm)
+      <grounding_rules>  cho phép suy luận tài liệu + dữ kiện user
+      <citation_rules>   trích TÊN, mục "Nguồn:" hoặc bỏ nếu xã giao
+      <followup_suggestions> 3 câu rút từ <retrieved_documents>
     │
     ▼
 [LLM] Claude Sonnet 4
@@ -304,13 +322,54 @@ Parser regex tách ra trường `suggested_questions[]` trong response JSON.
 
 ---
 
-## Session Memory
+## Conversation Memory (Hybrid 3 tầng)
 
-`app/core/session_memory.py` lưu history hội thoại theo `session_id` ra file (JSON). Mỗi turn gồm `{role, content}` của user + bot. Không có TTL — xoá thủ công nếu cần.
+Memory của bot được chia 3 tầng, mỗi tầng bắt 1 scope khác nhau:
 
-Khi chat:
-- `GET history` theo `session_id` → truyền vào prompt cùng query mới.
-- Sau khi có answer → `add_turn(session_id, user_msg, answer)`.
+| Tầng | Module | Lưu ở | Scope | Role |
+|------|--------|-------|-------|------|
+| 1 — Sliding window | `app/core/session_memory.py` | File `data/sessions/{sid}.json` | Cùng session | 3 pair gần nhất (direct context) |
+| 2 — Rolling summary | `app/core/conv_summarizer.py` | Cùng file, field `summary` | Cùng session | Haiku tóm tắt các pair đã rớt khỏi window |
+| 3 — Vector recall | `app/core/conv_memory.py` | Qdrant `ttt_memory` | Cross-session theo `user_id` | Mọi pair đã upsert, search bằng Voyage |
+
+### Flow mỗi lượt chat
+
+```
+POST /api/chat/ {message, session_id, user_id, domain}
+  │
+  ├─► session_memory.get_history(sid)      # tầng 1
+  ├─► session_memory.get_summary(sid)      # tầng 2
+  │
+  ├─► RAGChain.answer():
+  │     ├─ conv_query_rewriter.rewrite()   # giải đại từ "nó / cái đó / ngân sách đó"
+  │     ├─ parallel:
+  │     │   ├─ retriever.retrieve()        # doc RAG (ttt_documents + ttt_videos + vmedia)
+  │     │   └─ conv_memory.retrieve()      # tầng 3 — filter user_id, same-session exclude
+  │     ├─ reranker.rerank()
+  │     ├─ build_system_prompt(domain)     # XML: rules + language_style + reasoning
+  │     ├─ build_conversation_block()      # XML: <session_summary> + <user_context>
+  │     ├─ build_context_block()           # XML: <retrieved_documents>
+  │     └─ claude.generate()
+  │
+  └─► background task:
+        ├─ session_memory.add_turn()
+        ├─ pop_overflow → conv_summarizer.summarize → set_summary
+        └─ conv_memory.upsert_pair() — SKIP nếu bot trả "không tìm thấy"
+                                       (tránh feedback loop)
+```
+
+### Guards
+
+**No-info skip**: `app/api/chat.py` có `_is_no_info_answer()` check các marker như "không tìm thấy thông tin", "tôi không biết"... Pair nào bot trả kiểu đó sẽ KHÔNG upsert vào `ttt_memory`. Ngăn feedback loop khi user hỏi câu tương tự về sau → recall lại câu "không biết" cũ → lặp lại "không biết" thay vì dùng fact thật.
+
+**Same-session filter**: `conv_memory.retrieve()` loại bỏ pair cùng `session_id` — vì đã có trong sliding window + summary, recall lại sẽ trùng.
+
+### Endpoints quản lý
+
+| Endpoint | Hành vi |
+|----------|---------|
+| `DELETE /api/chat/memory/user/{user_id}` | Xoá toàn bộ pair của user trong Qdrant (GDPR / reset test) |
+| `DELETE /api/chat/memory/session/{session_id}` | Xoá file JSON + pair cùng session_id trong Qdrant |
 
 ---
 
@@ -329,8 +388,11 @@ trungtamtrithuc/
 │   │   ├── chunker.py           # Heading-aware chunking (tiktoken cl100k_base)
 │   │   ├── claude_client.py     # Anthropic messages client (sync + stream)
 │   │   ├── voyage_embed.py      # Voyage embedder (query vs document)
-│   │   ├── qdrant_store.py      # QdrantStore (R/W) + VMediaReadOnlyStore
-│   │   └── session_memory.py    # File-backed conversation history
+│   │   ├── qdrant_store.py     # QdrantStore (R/W) + VMediaReadOnlyStore
+│   │   ├── session_memory.py    # Sliding window + rolling summary (file JSON)
+│   │   ├── conv_memory.py       # Vector recall Qdrant ttt_memory (cross-session)
+│   │   ├── conv_summarizer.py   # Haiku summarize rolled turns
+│   │   └── conv_query_rewriter.py  # Haiku rewrite đại từ → query độc lập
 │   ├── ingestion/
 │   │   ├── doc_parser.py        # 3-tier parser + typo fix
 │   │   ├── doc_pipeline.py      # Table detect + LLM describe + Vision+context
@@ -347,7 +409,14 @@ trungtamtrithuc/
 │   ├── chat.html
 │   ├── ingest.html
 │   └── knowledge.html
-├── data/{uploads,logs}/         # Runtime (auto-created)
+├── data/{uploads,logs,sessions}/    # Runtime (sessions = file JSON session_memory)
+├── scripts/
+│   ├── check_memory_collection.py   # Schema + sample payload ttt_memory
+│   ├── diag_conv_memory.py          # Count theo user + test retrieve()
+│   ├── clean_poisoned_pairs.py      # Xoá pair "không tìm thấy" khỏi Qdrant
+│   ├── seed_two_users.py            # Seed 2 test user + conv turns
+│   ├── test_conversation_memory.py  # Test 3 tầng hybrid memory
+│   └── test_fix_e2e.py              # E2E test cross-session recall
 ├── docs/
 │   ├── PROJECT_OVERVIEW.md      # File này
 │   └── INTEGRATION.md           # Tích hợp FE/BE
@@ -469,7 +538,9 @@ POST /api/chat/
 ## Hướng phát triển
 
 - **Streaming response** — chain đã có `answer_stream()` (SSE-ready), cần wire `/api/chat/stream`.
-- **Auth & user_id** — hiện `session_id` là identifier duy nhất; tích hợp đăng nhập để lưu history đa phiên theo user.
+- **Auth thật** — hiện `user_id` là string tự do client truyền; tích hợp đăng nhập để verify + chống impersonate memory của user khác.
+- **User profile extract** — tách fact cá nhân (tên, team, ngân sách, preference) ra block riêng thay vì lẫn trong recall pairs — tăng độ bền trước khi recall score rơi dưới threshold.
 - **Admin CRUD knowledge** — delete/re-index tài liệu từ `knowledge.html`.
 - **Evaluation harness** — tập test câu hỏi + ground truth để đo recall/precision.
+- **Prompt cache tối ưu** — move `<retrieved_documents>` từ system block sang user turn để cache stable persona cross-query (giảm ~90% cost phần prompt ổn định).
 - **Multi-tenant** — tách namespace theo organization.

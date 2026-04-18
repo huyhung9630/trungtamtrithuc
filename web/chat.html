@@ -300,6 +300,11 @@
   <div class="app">
     <aside class="sidebar">
       <button class="btn-new" id="newChatBtn">+ Cuộc hội thoại mới</button>
+      <div class="domain-label">User đang test</div>
+      <select class="domain-select" id="userSelect">
+        <option value="test-user-1">User 1 (test-user-1)</option>
+        <option value="test-user-2">User 2 (test-user-2)</option>
+      </select>
       <div class="domain-label">Lĩnh vực chuyên gia</div>
       <select class="domain-select" id="domainSelect">
         <option value="mặc định">Tất cả lĩnh vực</option>
@@ -334,11 +339,16 @@
   <script type="module">
     const API_BASE = '';
 
-    let sessionId = localStorage.getItem('ttt_session_id') || crypto.randomUUID();
-    localStorage.setItem('ttt_session_id', sessionId);
+    const userSelect = document.getElementById('userSelect');
+    let currentUserId = localStorage.getItem('ttt_user_id') || 'test-user-1';
+    userSelect.value = currentUserId;
 
-    let sessions = JSON.parse(localStorage.getItem('ttt_sessions') || '[]');
-    let currentSessionId = sessionId;
+    const sessionKey = uid => `ttt_sessions_${uid}`;
+    const currentSessionKey = uid => `ttt_session_id_${uid}`;
+
+    let sessions = JSON.parse(localStorage.getItem(sessionKey(currentUserId)) || '[]');
+    let currentSessionId = localStorage.getItem(currentSessionKey(currentUserId)) || crypto.randomUUID();
+    localStorage.setItem(currentSessionKey(currentUserId), currentSessionId);
 
     const messagesEl = document.getElementById('messages');
     const inputBox = document.getElementById('inputBox');
@@ -390,7 +400,7 @@
       s.messages = s.messages || [];
       s.messages.push({ role, content, sources, suggestions });
       if (!s.title && role === 'user') s.title = content.slice(0, 48);
-      localStorage.setItem('ttt_sessions', JSON.stringify(sessions));
+      localStorage.setItem(sessionKey(currentUserId), JSON.stringify(sessions));
       renderSessionList();
     }
 
@@ -535,6 +545,7 @@
           body: JSON.stringify({
             message: text,
             session_id: currentSessionId,
+            user_id: currentUserId,
             domain: document.getElementById('domainSelect').value,
             history: []
           })
@@ -565,12 +576,22 @@
 
     document.getElementById('newChatBtn').addEventListener('click', () => {
       currentSessionId = crypto.randomUUID();
-      localStorage.setItem('ttt_session_id', currentSessionId);
+      localStorage.setItem(currentSessionKey(currentUserId), currentSessionId);
       showEmpty();
       renderSessionList();
     });
 
+    userSelect.addEventListener('change', () => {
+      currentUserId = userSelect.value;
+      localStorage.setItem('ttt_user_id', currentUserId);
+      sessions = JSON.parse(localStorage.getItem(sessionKey(currentUserId)) || '[]');
+      currentSessionId = localStorage.getItem(currentSessionKey(currentUserId)) || crypto.randomUUID();
+      localStorage.setItem(currentSessionKey(currentUserId), currentSessionId);
+      loadSession(currentSessionId);
+    });
+
     renderSessionList();
+    loadSession(currentSessionId);
   </script>
 </body>
 </html>

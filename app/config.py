@@ -60,6 +60,15 @@ YOUTUBE_PROXY_LIST: str = os.getenv("YOUTUBE_PROXY_LIST", "")
 YOUTUBE_TRANSCRIPT_MAX_RETRIES: int = int(os.getenv("YOUTUBE_TRANSCRIPT_MAX_RETRIES", "10"))
 YOUTUBE_TRANSCRIPT_RETRY_DELAY: float = float(os.getenv("YOUTUBE_TRANSCRIPT_RETRY_DELAY", "1.5"))
 
+# Conversation Memory (Hybrid: sliding window + rolling summary + vector recall)
+CONV_COLLECTION: str = os.getenv("CONV_COLLECTION", "ttt_memory")
+CONV_WINDOW_TURNS: int = int(os.getenv("CONV_WINDOW_TURNS", "3"))
+CONV_SUMMARY_TRIGGER_EXTRA: int = int(os.getenv("CONV_SUMMARY_TRIGGER_EXTRA", "2"))
+CONV_SUMMARY_MAX_TOKENS: int = int(os.getenv("CONV_SUMMARY_MAX_TOKENS", "400"))
+CONV_RECALL_TOP_K: int = int(os.getenv("CONV_RECALL_TOP_K", "5"))
+CONV_RECALL_MIN_SCORE: float = float(os.getenv("CONV_RECALL_MIN_SCORE", "0.3"))
+CONV_REWRITE_MIN_LEN: int = int(os.getenv("CONV_REWRITE_MIN_LEN", "40"))
+
 # Data dirs
 UPLOAD_DIR = BASE_DIR / "data" / "uploads"
 LOG_DIR = BASE_DIR / "data" / "logs"
