@@ -9,8 +9,8 @@ Tính năng chính:
 1. **Nạp tài liệu** đa định dạng (PDF, DOCX, XLSX, TXT, MD) qua pipeline 3 tier.
 2. **Nạp video** (YouTube URL, YouTube Playlist, file MP4/MKV/AVI/MOV) — phiên âm + embed theo timestamp.
 3. **Hỏi đáp** với chuyên gia theo domain (BIM, MEP, kết cấu, marketing, pháp lý, sản xuất, hoặc tự do).
-4. **Entity Memory Store** — retrieve memory record đã có trong Qdrant `ttt_memory` để đưa vào ngữ cảnh câu trả lời.
-5. **Gợi ý câu hỏi tiếp theo** tự động sau mỗi câu trả lời.
+4. **Gợi ý câu hỏi tiếp theo** tự động sau mỗi câu trả lời.
+5. **Session history** file-backed — nhớ hội thoại trong phiên để tiếp tục ngữ cảnh.
 
 Bộ công nghệ lõi: **Claude Sonnet 4** (trả lời) + **Claude Haiku 4.5** (Vision + describe table), **Voyage AI** (`voyage-3`, 1024-dim) cho embedding, **Qdrant Cloud** làm vector store.
 
@@ -51,9 +51,9 @@ Bộ công nghệ lõi: **Claude Sonnet 4** (trả lời) + **Claude Haiku 4.5**
             |                                          |
   +---------v------------------------------------------v----------+
   |                    Qdrant Vector Database                    |
-  |  +----------------+  +----------------+  +----------------+ |
-  |  | ttt_documents  |  | ttt_videos     |  | ttt_memory     | |
-  |  +----------------+  +----------------+  +----------------+ |
+  |  +----------------+  +----------------+                      |
+  |  | ttt_documents  |  | ttt_videos     |                      |
+  |  +----------------+  +----------------+                      |
   |                                                              |
   |  +---------------------------------------------------------+ |
   |  | vmedia_* (READ ONLY — cluster riêng)                    | |
@@ -304,94 +304,13 @@ Parser regex tách ra trường `suggested_questions[]` trong response JSON.
 
 ---
 
-## Entity Memory System
+## Session Memory
 
-Collection Qdrant riêng: **`ttt_memory`** (cùng cluster chính).
+`app/core/session_memory.py` lưu history hội thoại theo `session_id` ra file (JSON). Mỗi turn gồm `{role, content}` của user + bot. Không có TTL — xoá thủ công nếu cần.
 
-### Schema (`app/core/entity_schema.py`)
-
-```python
-class MemoryRecord(BaseModel):
-    memory_id: str               # "mem_<hex12>"
-    text: str                    # nội dung nhớ
-    category: "persistent" | "contextual" | "preference" | "summary"
-    user_id: str
-    session_id: str
-    created_at: int              # unix timestamp
-    last_accessed: int
-    access_count: int = 0
-    confidence: float = 0.8
-    status: "active" | "superseded" | "archived"
-    tags: list[str]
-    domain: str = "mặc định"
-    superseded_by: str | None
-    supersedes: list[str]
-    turn_count: int              # số turn đã tóm tắt (cho summary)
-```
-
-Bốn category:
-
-| Category | Mô tả | VD |
-|----------|-------|-----|
-| `persistent` | Thông tin cá nhân bền vững | "Tên Tuấn, kỹ sư BIM, TDI" |
-| `preference` | Cách user muốn được trả lời | "Thích câu trả lời ngắn, bullet" |
-| `contextual` | Chủ đề đang quan tâm | "Đang chuẩn bị báo cáo Q2 cho sếp" |
-| `summary` | Tóm tắt session | "Trao đổi về kế hoạch truyền thông..." |
-
-> Hệ thống hiện **không** tự sinh memory record từ hội thoại. Dữ liệu trong `ttt_memory` phải được nạp qua pipeline khác (ingestion tool riêng, import bulk, v.v.). Chat API chỉ đọc memory để đưa vào ngữ cảnh, không ghi.
-
-### Upsert logic
-
-```
-Embed(record.text) → vec
-    │
-    ▼
-Nếu category == "summary":
-    → search summary cũ của CÙNG session → supersede
-    → insert new
-
-Ngược lại (entity):
-    search entity cùng (user_id, category, status=active):
-      ├─ score ≥ 0.88 (DUP_THRESHOLD)
-      │     → duplicate: touch last_accessed, access_count++
-      ├─ 0.75 ≤ score < 0.88 (CONFLICT_THRESHOLD)
-      │     → supersede old, insert new với supersedes=[old_id]
-      └─ score < 0.75
-            → insert new
-```
-
-### Retrieve (hybrid)
-
-```
-Query 1 — Near context (các recent sessions):
-    filter: user_id + status=active + session_id in recent_sessions
-    limit: 15
-
-Query 2 — Long-term profile:
-    filter: user_id + status=active + category in [persistent, preference]
-    limit: 5
-
-Merge + dedup by memory_id
-    ▼
-Rerank (combined score):
-    0.50 × semantic
-  + 0.25 × recency (exp(-0.099 × age_days), half-life 7 ngày)
-  + 0.15 × same_session_bonus
-  + 0.10 × frequency (access_count / 10, capped 1.0)
-    ▼
-Top-K = 5 → touch last_accessed
-    ▼
-Inject vào prompt:
-    ## Tóm tắt cuộc trò chuyện trước: <summaries>
-    ## Thông tin đã biết về user: (grouped theo category)
-       Hồ sơ: - ...
-       Sở thích/cách trả lời: - ...
-       Đang quan tâm: - ...
-```
-
-### GDPR delete
-
-`EntityMemory.delete_by_user(user_id)` — xoá toàn bộ memory của 1 user.
+Khi chat:
+- `GET history` theo `session_id` → truyền vào prompt cùng query mới.
+- Sau khi có answer → `add_turn(session_id, user_msg, answer)`.
 
 ---
 
@@ -401,7 +320,7 @@ Inject vào prompt:
 trungtamtrithuc/
 ├── app/
 │   ├── main.py                  # FastAPI app + CORS + static mount
-│   ├── config.py                # Env vars (Voyage, Qdrant, Claude, Memory, Proxy)
+│   ├── config.py                # Env vars (Voyage, Qdrant, Claude, Proxy)
 │   ├── schemas.py               # ChatRequest/Response, Ingest, KnowledgeSearch
 │   ├── api/
 │   │   ├── chat.py              # POST /api/chat/
@@ -411,9 +330,7 @@ trungtamtrithuc/
 │   │   ├── claude_client.py     # Anthropic messages client (sync + stream)
 │   │   ├── voyage_embed.py      # Voyage embedder (query vs document)
 │   │   ├── qdrant_store.py      # QdrantStore (R/W) + VMediaReadOnlyStore
-│   │   ├── session_memory.py    # File-backed conversation history
-│   │   ├── entity_schema.py     # MemoryRecord (Pydantic)
-│   │   └── entity_memory.py     # Upsert (dedup/conflict) + hybrid retrieve
+│   │   └── session_memory.py    # File-backed conversation history
 │   ├── ingestion/
 │   │   ├── doc_parser.py        # 3-tier parser + typo fix
 │   │   ├── doc_pipeline.py      # Table detect + LLM describe + Vision+context
@@ -424,14 +341,12 @@ trungtamtrithuc/
 │       ├── chain.py             # Retrieve → rerank → generate → parse suggestions
 │       ├── retriever.py         # Multi-source parallel search
 │       ├── reranker.py          # Cross-encoder reranker
-│       └── prompt_builder.py    # Domain presets + context + table_data + memory block
+│       └── prompt_builder.py    # Domain presets + context + table_data
 ├── web/                         # Static frontend
 │   ├── index.html
 │   ├── chat.html
 │   ├── ingest.html
 │   └── knowledge.html
-├── scripts/
-│   └── init_memory_collection.py  # Khởi tạo ttt_memory collection
 ├── data/{uploads,logs}/         # Runtime (auto-created)
 ├── docs/
 │   ├── PROJECT_OVERVIEW.md      # File này
@@ -463,9 +378,6 @@ brew install poppler
 
 cp .env.example .env
 # Điền: ANTHROPIC_API_KEY, VOYAGE_API_KEY, QDRANT_URL, QDRANT_API_KEY
-
-# Khởi tạo collection memory (1 lần duy nhất)
-python scripts/init_memory_collection.py
 
 ./run.sh
 ```
@@ -552,30 +464,12 @@ POST /api/chat/
   → memory.add_turn(session_id, user_msg, answer)
 ```
 
-### 4. Entity Memory lifecycle
-
-```
-Upsert (khi có nguồn ghi memory riêng):
-  vec = embed(text)
-  search similar (user_id, category, active)
-  ├─ ≥0.88 → touch duplicate
-  ├─ 0.75-0.88 → supersede old + insert
-  └─ <0.75 → insert
-  Summary: luôn supersede summary cũ cùng session
-
-Retrieve (dùng trong /chat nâng cao):
-  near = search(user_id, recent_sessions)
-  longterm = search(user_id, persistent+preference)
-  merged → rerank (semantic + recency + session + freq)
-  → top 5 → build memory block → inject vào prompt
-```
-
 ---
 
 ## Hướng phát triển
 
 - **Streaming response** — chain đã có `answer_stream()` (SSE-ready), cần wire `/api/chat/stream`.
-- **Auth & user_id** — hiện `user_id` fallback = `session_id`, cần tích hợp đăng nhập để memory đa phiên hoạt động đầy đủ.
+- **Auth & user_id** — hiện `session_id` là identifier duy nhất; tích hợp đăng nhập để lưu history đa phiên theo user.
 - **Admin CRUD knowledge** — delete/re-index tài liệu từ `knowledge.html`.
 - **Evaluation harness** — tập test câu hỏi + ground truth để đo recall/precision.
 - **Multi-tenant** — tách namespace theo organization.

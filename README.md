@@ -1,6 +1,6 @@
 # Trung Tâm Tri Thức — RAG Chatbot
 
-Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Generation): nạp tài liệu (PDF/DOCX/XLSX/TXT/MD), video (MP4/YouTube/Playlist), trả lời tiếng Việt kèm trích dẫn nguồn và gợi ý câu hỏi tiếp theo. Tích hợp **Entity Memory Store** (Qdrant) cho phép retrieve memory đã có từ phiên trước.
+Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Generation): nạp tài liệu (PDF/DOCX/XLSX/TXT/MD), video (MP4/YouTube/Playlist), trả lời tiếng Việt kèm trích dẫn nguồn và gợi ý câu hỏi tiếp theo.
 
 ## Kiến trúc tổng thể
 
@@ -30,7 +30,6 @@ Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Gen
   │ Voyage AI embed (voyage-3)   │ ───────────► │ Qdrant Cloud                     │
   │   1024-dim vectors           │              │  ttt_documents    (R/W)          │
   └──────────────────────────────┘              │  ttt_videos       (R/W)          │
-                                                │  ttt_memory       (R/W)          │
                                                 │  vmedia_*         (READ ONLY)    │
                                                 └──────────────┬───────────────────┘
                                                                │ search
@@ -38,9 +37,7 @@ Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Gen
             │                                                  ▼
             ├──────────────► ┌──────────────────────────────────────────┐
             │                │  Retriever (parallel, 3 nguồn)           │
-            │                │   + Entity Memory (near + long-term)     │
             │                └──────────────────────┬───────────────────┘
-            │                                       │
             │                                       ▼
             │                ┌──────────────────────────────────────────┐
             │                │  Reranker (cross-encoder)                │
@@ -49,7 +46,7 @@ Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Gen
             │                ┌──────────────────────────────────────────┐
             │                │  Prompt builder                          │
             │                │   system + domain preset + context       │
-            │                │   + table_data + history + memory        │
+            │                │   + table_data + history                 │
             │                └──────────────────────┬───────────────────┘
             │                                       ▼
             │                ┌──────────────────────────────────────────┐
@@ -89,7 +86,7 @@ cp .env.example .env            # điền API keys (xem bảng bên dưới)
 | `VOYAGE_MODEL` | Mặc định `voyage-3` |
 | `VOYAGE_DIM` | Mặc định `1024` |
 | `QDRANT_URL` | URL Qdrant cluster chính |
-| `QDRANT_API_KEY` | Key R/W cho `ttt_documents` + `ttt_videos` + `ttt_memory` |
+| `QDRANT_API_KEY` | Key R/W cho `ttt_documents` + `ttt_videos` |
 
 ### Tuỳ chọn
 
@@ -99,7 +96,6 @@ cp .env.example .env            # điền API keys (xem bảng bên dưới)
 | `CLAUDE_HAIKU_MODEL` | `claude-haiku-4-5-20251001` | Vision + describe table |
 | `COLLECTION_DOCS` | `ttt_documents` | Collection tài liệu |
 | `COLLECTION_VIDEOS` | `ttt_videos` | Collection video |
-| `MEMORY_COLLECTION` | `ttt_memory` | Collection memory |
 | `CHUNK_MAX_TOKENS` | `700` | Kích thước chunk tối đa |
 | `CHUNK_OVERLAP_TOKENS` | `80` | Overlap giữa các chunk |
 | `TOP_K` | `7` | Số hit trước rerank |
@@ -164,9 +160,7 @@ trungtamtrithuc/
 │   │   ├── claude_client.py    # Anthropic client wrapper
 │   │   ├── voyage_embed.py     # Voyage AI embedder
 │   │   ├── qdrant_store.py     # Qdrant R/W + VMediaReadOnlyStore
-│   │   ├── session_memory.py   # File-backed conversation history
-│   │   ├── entity_schema.py    # MemoryRecord (Pydantic)
-│   │   └── entity_memory.py    # Upsert + retrieve (Qdrant ttt_memory)
+│   │   └── session_memory.py   # File-backed conversation history
 │   ├── ingestion/
 │   │   ├── doc_parser.py       # 3-tier PDF parsing + typo fix
 │   │   ├── doc_pipeline.py     # Table detect/process + embed + store
@@ -177,9 +171,8 @@ trungtamtrithuc/
 │       ├── chain.py            # Retrieve → rerank → generate → parse suggestions
 │       ├── retriever.py        # Multi-source parallel search
 │       ├── reranker.py         # Cross-encoder reranker
-│       └── prompt_builder.py   # System prompt + context + table_data + memory
+│       └── prompt_builder.py   # System prompt + context + table_data
 ├── web/                        # Static frontend (HTML/CSS/JS)
-├── scripts/init_memory_collection.py
 ├── data/{uploads,logs}/        # Runtime (auto-created)
 ├── docs/{PROJECT_OVERVIEW,INTEGRATION}.md
 ├── requirements.txt
@@ -305,6 +298,7 @@ const {answer, sources, suggested_questions} = await res.json();
 | Claude Vision | Docling fail / bảng có màu | ~$0.002/trang |
 | LLM mô tả bảng | Bảng có dữ liệu | ~$0.001/bảng |
 | Voyage embed | Luôn chạy | ~$0.0001/chunk |
+| Claude Sonnet 4 answer | Mỗi câu trả lời | ~$0.003-0.015/lần |
 | **File text thuần** | Docling OK | **~$0.001/file** |
 | **File phức tạp** | Vision + LLM | **~$0.005-0.01/file** |
 
@@ -317,10 +311,10 @@ const {answer, sources, suggested_questions} = await res.json();
 | `ffmpeg not found` | `brew install ffmpeg` (chỉ cần khi ingest video local) |
 | YouTube `IP blocked` | Cấu hình `YOUTUBE_PROXY_LIST` hoặc Webshare |
 | `openai-whisper not installed` | Bật dòng `openai-whisper` trong `requirements.txt` và `pip install` lại |
-| `collection not found` | Nạp ít nhất 1 tài liệu để tạo collection (hoặc chạy `scripts/init_memory_collection.py`) |
+| `collection not found` | Nạp ít nhất 1 tài liệu để tạo collection |
 | Server khởi động chậm lần đầu | Docling tải model — chờ 1-2 phút |
 
 ## Tài liệu chi tiết
 
-- `docs/PROJECT_OVERVIEW.md` — kiến trúc, pipeline, quy tắc xử lý bảng, memory system
+- `docs/PROJECT_OVERVIEW.md` — kiến trúc, pipeline, quy tắc xử lý bảng
 - `docs/INTEGRATION.md` — hướng dẫn tích hợp FE/BE

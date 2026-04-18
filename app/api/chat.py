@@ -17,7 +17,6 @@ from app.core.claude_client import ClaudeClient
 from app.core.voyage_embed import VoyageEmbedder
 from app.core.qdrant_store import QdrantStore, VMediaReadOnlyStore
 from app.core.session_memory import memory
-from app.core.entity_memory import EntityMemory
 from app.rag.retriever import Retriever
 from app.rag.reranker import CrossEncoderReranker
 from app.rag.chain import RAGChain
@@ -27,14 +26,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 _chain: RAGChain | None = None
-_entity_memory: EntityMemory | None = None
-
-
-def _get_entity_memory() -> EntityMemory:
-    global _entity_memory
-    if _entity_memory is None:
-        _entity_memory = EntityMemory()
-    return _entity_memory
 
 
 def _get_chain() -> RAGChain:
@@ -58,14 +49,11 @@ def _get_chain() -> RAGChain:
         collections=VMEDIA_COLLECTIONS,
     )
 
-    entity_mem = _get_entity_memory()
-
     retriever = Retriever(
         voyage=voyage,
         qdrant_docs=qdrant_docs,
         qdrant_videos=qdrant_videos,
         vmedia_store=vmedia_store,
-        entity_memory=entity_mem,
     )
     reranker = CrossEncoderReranker()
 
