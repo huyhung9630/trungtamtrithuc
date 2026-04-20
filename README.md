@@ -112,6 +112,10 @@ cp .env.example .env            # điền API keys (xem bảng bên dưới)
 | `CONV_RECALL_TOP_K` | `5` | Số pair Qdrant recall mỗi lần |
 | `CONV_RECALL_MIN_SCORE` | `0.3` | Score tối thiểu để recall (Voyage cosine) |
 | `CONV_REWRITE_MIN_LEN` | `40` | Query ngắn hơn ngưỡng này sẽ được rewrite |
+| `CONV_MIN_USER_CHARS` | `20` | Guard 1 — user_msg ngắn hơn → skip upsert |
+| `CONV_MIN_BOT_CHARS` | `40` | Guard 1 — bot_msg ngắn hơn + không có `Nguồn:` → skip |
+| `CONV_DEDUP_THRESHOLD` | `0.92` | Guard 3 — cosine với pair cũ vượt ngưỡng → skip, chỉ update `last_seen_at` |
+| `CONV_HASH_CACHE_SIZE` | `2000` | Guard 2 — số MD5 hash gần nhất giữ trong RAM để chặn exact dup |
 
 ### Collection READ-ONLY (vmedia)
 
@@ -340,7 +344,18 @@ Khi có query mới:
 3. Build prompt XML: `<retrieved_documents>` + `<session_summary>` + `<user_context>` (pairs).
 4. Sau khi trả lời: upsert pair mới vào Qdrant, pop overflow + update summary.
 
-**Guard chống feedback loop**: pair mà bot trả "không tìm thấy / không biết" sẽ KHÔNG upsert vào Qdrant (tránh recall lại chính câu "không biết" cũ).
+### Guards chống bloat Qdrant (4 lớp)
+
+Mỗi turn, trước khi upsert pair vào `ttt_memory`, hệ thống chạy 4 lớp guard liên tiếp để tránh phình storage và nhiễu recall:
+
+| # | Guard | Module | Chặn cái gì | Chi phí |
+|---|-------|--------|-------------|---------|
+| 0 | **No-info filter** | `app/api/chat.py::_is_no_info_answer` | Pair mà bot trả "không tìm thấy / không biết" → tránh feedback loop | 0 (regex in-RAM) |
+| 1 | **Heuristic filter** | `conv_memory._is_worth_storing` | Câu xã giao (length < 20/40, regex "xin chào/cảm ơn/ok/vâng...", density thấp) | 0 (regex in-RAM) |
+| 2 | **Hash dup LRU** | `conv_memory._hash_seen` | Exact duplicate theo MD5 pair đã normalize, cache per-user `CONV_HASH_CACHE_SIZE` | 0 (trước cả embed) |
+| 3 | **Semantic dedup** | `conv_memory._find_near_duplicate` | Pair cùng `user_id` có cosine ≥ `CONV_DEDUP_THRESHOLD` (0.92) → chỉ update `last_seen_at`, không ghi point mới | +1 Qdrant search (~5ms) |
+
+Tổng hiệu ứng thực tế: loại ~60-80% turn rác (greetings, ack, câu lặp) mà không tốn thêm LLM call. Chi tiết threshold dựa trên research Mem0 + Zep + EMem (xem `docs/PROJECT_OVERVIEW.md`).
 
 ### Test nhanh
 

@@ -14,9 +14,12 @@ ra ngoài để không làm fail chain chat.
 """
 from __future__ import annotations
 
+import hashlib
 import logging
+import re
 import time
 import uuid
+from collections import OrderedDict
 from typing import Any
 
 import requests
@@ -27,12 +30,31 @@ from app.config import (
     CONV_COLLECTION,
     CONV_RECALL_TOP_K,
     CONV_RECALL_MIN_SCORE,
+    CONV_MIN_USER_CHARS,
+    CONV_MIN_BOT_CHARS,
+    CONV_DEDUP_THRESHOLD,
+    CONV_HASH_CACHE_SIZE,
 )
 from app.core.voyage_embed import VoyageEmbedder
 
 logger = logging.getLogger(__name__)
 
 MAX_PAIR_CHARS = 3000  # ~800 tokens, truncate trước khi embed
+
+# Regex chặn câu xã giao tiếng Việt + Anh. Anchor `\W*$` để chỉ match cả câu
+# (không chặn nhầm "ok bạn ơi cho hỏi...").
+_SKIP_PATTERNS = [
+    re.compile(p, re.IGNORECASE | re.UNICODE)
+    for p in (
+        r"^(xin chào|chào|hello|hi|hey)\W*$",
+        r"^(chào buổi (sáng|chiều|tối))\W*$",
+        r"^(cảm ơn|cám ơn|thank|thanks|tks|thx)\W*$",
+        r"^(ok|oke|okay|được|được rồi|đã hiểu|hiểu rồi)\W*$",
+        r"^(vâng|dạ|ừ|uhm|ah|ờ|à)\W*$",
+        r"^(tốt lắm|hay quá|tuyệt|great|nice)\W*$",
+        r"^(tạm biệt|bye|goodbye|hẹn gặp lại)\W*$",
+    )
+]
 
 
 def _format_pair_text(user_text: str, assistant_text: str) -> str:
@@ -43,6 +65,56 @@ def _format_pair_text(user_text: str, assistant_text: str) -> str:
     if len(combined) > MAX_PAIR_CHARS:
         combined = combined[:MAX_PAIR_CHARS] + "…"
     return combined
+
+
+def _is_worth_storing(user_msg: str, bot_msg: str) -> tuple[bool, str]:
+    """Heuristic filter — loại pair không đáng lưu vào vector memory.
+
+    Returns:
+        (True, "") nếu đáng lưu.
+        (False, "<lý do>") nếu skip — caller log lý do.
+
+    Ba lớp lọc nối tiếp:
+      A. Length gate — câu quá ngắn hoặc bot chỉ chitchat (không có "Nguồn:")
+      B. Pattern gate — regex câu xã giao / acknowledgement
+      C. Density gate — câu ngắn + không có số + không có từ dài → thiếu thông tin
+    """
+    u = (user_msg or "").strip()
+    b = (bot_msg or "").strip()
+
+    if len(u) < CONV_MIN_USER_CHARS:
+        return False, f"user_msg quá ngắn ({len(u)} < {CONV_MIN_USER_CHARS})"
+
+    if len(b) < CONV_MIN_BOT_CHARS and "nguồn:" not in b.lower():
+        return False, f"bot_msg chitchat ({len(b)} chars, no 'Nguồn:')"
+
+    for pat in _SKIP_PATTERNS:
+        if pat.match(u):
+            return False, f"user_msg match skip pattern: {pat.pattern}"
+
+    # Layer C: information density — câu < 6 từ, không có số, không có từ > 5 ký tự
+    words = u.split()
+    if len(words) < 6:
+        has_digit = any(ch.isdigit() for ch in u)
+        has_long_word = any(len(w) > 5 for w in words)
+        if not has_digit and not has_long_word:
+            return False, "user_msg density thấp (ít từ, không số, không từ dài)"
+
+    return True, ""
+
+
+def _normalize_for_hash(text: str) -> str:
+    """Normalize để hash: lowercase + collapse whitespace + strip punctuation cuối."""
+    t = text.lower().strip()
+    t = re.sub(r"\s+", " ", t)
+    t = t.rstrip(".!?,;:… ")
+    return t
+
+
+def _hash_pair(user_msg: str, bot_msg: str) -> str:
+    """MD5 của pair đã normalize — dùng làm exact-dup key."""
+    key = f"{_normalize_for_hash(user_msg)}||{_normalize_for_hash(bot_msg)}"
+    return hashlib.md5(key.encode("utf-8")).hexdigest()
 
 
 class ConversationMemory:
@@ -57,6 +129,71 @@ class ConversationMemory:
         self.collection = CONV_COLLECTION
         self.embedder = embedder
         self._vector_name = ""  # match collection config
+        # LRU cache hash pair gần nhất theo từng user → chặn exact dup trước khi embed.
+        # OrderedDict[user_id, OrderedDict[pair_hash, None]] — simple LRU per user.
+        self._hash_cache: OrderedDict[str, OrderedDict[str, None]] = OrderedDict()
+
+    # ------------------------------------------------------------- hash cache
+
+    def _hash_seen(self, user_id: str, pair_hash: str) -> bool:
+        """Check+update LRU hash cache. Trả True nếu đã thấy hash này."""
+        bucket = self._hash_cache.get(user_id)
+        if bucket is None:
+            bucket = OrderedDict()
+            self._hash_cache[user_id] = bucket
+        if pair_hash in bucket:
+            bucket.move_to_end(pair_hash)
+            return True
+        bucket[pair_hash] = None
+        # Trim bucket + global để tổng không vượt CONV_HASH_CACHE_SIZE
+        while len(bucket) > CONV_HASH_CACHE_SIZE:
+            bucket.popitem(last=False)
+        total = sum(len(b) for b in self._hash_cache.values())
+        while total > CONV_HASH_CACHE_SIZE * 4 and self._hash_cache:
+            oldest_user = next(iter(self._hash_cache))
+            self._hash_cache.pop(oldest_user)
+            total = sum(len(b) for b in self._hash_cache.values())
+        return False
+
+    # ---------------------------------------------------------- semantic dedup
+
+    def _find_near_duplicate(
+        self,
+        user_id: str,
+        vec: list[float],
+        threshold: float,
+    ) -> dict | None:
+        """Search pair cũ cùng user có cosine >= threshold. Trả hit đầu tiên hoặc None."""
+        try:
+            body = {
+                "vector": {"name": self._vector_name, "vector": vec},
+                "limit": 1,
+                "with_payload": False,
+                "filter": {
+                    "must": [{"key": "user_id", "match": {"value": user_id}}]
+                },
+                "score_threshold": threshold,
+            }
+            result = self._req(
+                "POST", f"/collections/{self.collection}/points/search", body
+            )
+            hits = result.get("result", [])
+            return hits[0] if hits else None
+        except Exception:
+            logger.error("conv_memory near-dup search failed", exc_info=True)
+            return None
+
+    def _touch_last_seen(self, point_id: str | int, now: int) -> None:
+        """Cập nhật payload last_seen_at cho point đã có (không tăng hit_count
+        để tránh race condition — Qdrant không có atomic increment)."""
+        try:
+            self._req(
+                "POST",
+                f"/collections/{self.collection}/points/payload?wait=false",
+                {"payload": {"last_seen_at": now}, "points": [point_id]},
+            )
+        except Exception:
+            logger.error("conv_memory touch last_seen_at failed", exc_info=True)
 
     def _headers(self) -> dict:
         return {"api-key": self.api_key, "Content-Type": "application/json"}
@@ -87,14 +224,51 @@ class ConversationMemory:
         assistant_text: str,
         domain: str = "mặc định",
     ) -> bool:
-        """Embed pair và upsert. Trả True nếu OK."""
+        """Embed pair và upsert với 3 lớp chống bloat.
+
+        Trả True nếu thực sự ghi point mới vào Qdrant.
+        Trả False nếu bị 1 trong 3 guard chặn (heuristic / hash dup / semantic dup).
+        """
         try:
             pair_text = _format_pair_text(user_text, assistant_text)
             if len(pair_text) < 10:
                 return False
 
+            # Guard 1 — heuristic filter (zero-cost, chặn câu xã giao)
+            worth, reason = _is_worth_storing(user_text, assistant_text)
+            if not worth:
+                logger.info(
+                    "conv_memory skip upsert (heuristic): user=%s turn=%d — %s",
+                    user_id, turn_idx, reason,
+                )
+                return False
+
+            # Guard 2 — exact hash dup (zero-cost, chặn trước khi tốn embed)
+            pair_hash = _hash_pair(user_text, assistant_text)
+            if self._hash_seen(user_id, pair_hash):
+                logger.info(
+                    "conv_memory skip upsert (hash dup): user=%s turn=%d hash=%s",
+                    user_id, turn_idx, pair_hash[:8],
+                )
+                return False
+
+            # Embed 1 lần, reuse cho cả dedup search và upsert
             vec = self._embed(pair_text)
             now = int(time.time())
+
+            # Guard 3 — semantic dup (cosine >= threshold với pair cũ cùng user)
+            near = self._find_near_duplicate(user_id, vec, CONV_DEDUP_THRESHOLD)
+            if near is not None:
+                near_id = near.get("id")
+                self._touch_last_seen(near_id, now)
+                logger.info(
+                    "conv_memory skip upsert (semantic dup): user=%s turn=%d "
+                    "score=%.3f existing=%s",
+                    user_id, turn_idx, near.get("score", 0.0), near_id,
+                )
+                return False
+
+            # Thực sự ghi point mới
             conv_id = f"conv_{uuid.uuid4().hex[:12]}"
             point_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, conv_id))
 
@@ -105,8 +279,9 @@ class ConversationMemory:
                 "turn_idx": turn_idx,
                 "text": pair_text,
                 "created_at": now,
+                "last_seen_at": now,
                 "domain": domain or "mặc định",
-                "kind": "conversation_pair",  # để phân biệt với các record khác nếu có
+                "kind": "conversation_pair",
             }
 
             point = {

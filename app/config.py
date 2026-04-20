@@ -69,6 +69,17 @@ CONV_RECALL_TOP_K: int = int(os.getenv("CONV_RECALL_TOP_K", "5"))
 CONV_RECALL_MIN_SCORE: float = float(os.getenv("CONV_RECALL_MIN_SCORE", "0.3"))
 CONV_REWRITE_MIN_LEN: int = int(os.getenv("CONV_REWRITE_MIN_LEN", "40"))
 
+# Conv memory anti-bloat guards
+# - CONV_MIN_USER_CHARS: user_msg ngắn hơn → skip upsert (câu xã giao)
+# - CONV_MIN_BOT_CHARS: bot_msg ngắn hơn + không có "Nguồn:" → skip (chitchat)
+# - CONV_DEDUP_THRESHOLD: cosine score với pair cũ cùng user, vượt ngưỡng → skip upsert
+#   (0.90 EMem synonym, 0.95 Mem0 entity merge; 0.92 = trung dung Voyage-3)
+# - CONV_HASH_CACHE_SIZE: số hash gần nhất giữ trong RAM để chặn exact dup
+CONV_MIN_USER_CHARS: int = int(os.getenv("CONV_MIN_USER_CHARS", "20"))
+CONV_MIN_BOT_CHARS: int = int(os.getenv("CONV_MIN_BOT_CHARS", "40"))
+CONV_DEDUP_THRESHOLD: float = float(os.getenv("CONV_DEDUP_THRESHOLD", "0.92"))
+CONV_HASH_CACHE_SIZE: int = int(os.getenv("CONV_HASH_CACHE_SIZE", "2000"))
+
 # Data dirs
 UPLOAD_DIR = BASE_DIR / "data" / "uploads"
 LOG_DIR = BASE_DIR / "data" / "logs"

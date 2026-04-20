@@ -358,11 +358,20 @@ POST /api/chat/ {message, session_id, user_id, domain}
                                        (tránh feedback loop)
 ```
 
-### Guards
+### Guards chống bloat + feedback loop
 
-**No-info skip**: `app/api/chat.py` có `_is_no_info_answer()` check các marker như "không tìm thấy thông tin", "tôi không biết"... Pair nào bot trả kiểu đó sẽ KHÔNG upsert vào `ttt_memory`. Ngăn feedback loop khi user hỏi câu tương tự về sau → recall lại câu "không biết" cũ → lặp lại "không biết" thay vì dùng fact thật.
+Mỗi turn, trước khi upsert pair vào `ttt_memory`, pipeline chạy 4 lớp guard liên tiếp. Pair chỉ thực sự được ghi Qdrant khi pass CẢ 4.
 
-**Same-session filter**: `conv_memory.retrieve()` loại bỏ pair cùng `session_id` — vì đã có trong sliding window + summary, recall lại sẽ trùng.
+| # | Guard | Ở đâu | Chặn cái gì | Chi phí |
+|---|-------|-------|-------------|---------|
+| 0 | **No-info filter** | `app/api/chat.py::_is_no_info_answer` | Bot trả "không tìm thấy / tôi không biết / không có trong cơ sở tri thức" → skip upsert. Tránh feedback loop: hỏi tương tự về sau → recall lại câu "không biết" cũ → tự khẳng định lại "không biết" thay vì dùng fact thật. | 0 (regex) |
+| 1 | **Heuristic filter** | `conv_memory._is_worth_storing` | 3 sublayer tuần tự: (A) length gate — `len(user) < 20` hoặc `len(bot) < 40 AND không có "Nguồn:"`; (B) regex câu xã giao VN+EN với anchor `\W*$` (`xin chào, cảm ơn, ok, vâng, dạ, tạm biệt, tuyệt, hay quá...`); (C) density — câu < 6 từ + không có số + không có từ > 5 ký tự. | 0 (regex) |
+| 2 | **Hash dup LRU** | `conv_memory._hash_seen` | MD5 của pair đã normalize (lowercase + collapse whitespace + strip punctuation) — LRU `OrderedDict` per-user, size `CONV_HASH_CACHE_SIZE=2000`. Trùng exact → skip **trước cả embed**. | 0 |
+| 3 | **Semantic dedup** | `conv_memory._find_near_duplicate` | Embed pair (1 lần, reuse cho upsert), search Qdrant filter `user_id` với `score_threshold=CONV_DEDUP_THRESHOLD` (0.92). Có hit → gọi `_touch_last_seen()` update payload `last_seen_at` của pair cũ thay vì insert point mới. Giữ cluster collection compact, biết pair nào "hot". | +1 Qdrant search (~5ms) |
+
+**Same-session filter** (read side, không liên quan upsert): `conv_memory.retrieve()` loại pair cùng `session_id` hiện tại — vì đã có trong L1 sliding window + L2 summary, recall lại sẽ trùng context.
+
+Threshold chọn dựa trên: Mem0 paper dùng 0.95 cho entity merge, EMem paper dùng 0.90 cho synonym edge. 0.92 = trung dung cho Voyage-3 1024-dim. Log mỗi lần skip để audit volume ("conv_memory skip upsert (heuristic/hash/semantic): user=... reason=...").
 
 ### Endpoints quản lý
 
