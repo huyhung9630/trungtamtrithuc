@@ -173,6 +173,46 @@ def _fetch_title_ytdlp(video_id: str) -> str:
     return ""
 
 
+def fetch_youtube_metadata(url_or_id: str) -> dict:
+    """Lấy đầy đủ metadata video YouTube qua yt-dlp --dump-single-json.
+
+    KHÔNG tải video, không phụ thuộc transcript. Miễn phí, ~0.5-1s.
+
+    Trả về:
+      {
+        video_id, title, description, thumbnail, channel,
+        duration_sec, categories, yt_tags, source_url
+      }
+    """
+    video_id = _parse_youtube_id(url_or_id)
+    source_url = f"https://www.youtube.com/watch?v={video_id}"
+
+    result = subprocess.run(
+        ["yt-dlp", "--skip-download", "--dump-single-json",
+         "--no-warnings", "--no-playlist", source_url],
+        capture_output=True, text=True, timeout=45,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"yt-dlp metadata failed: {result.stderr[:300]}")
+
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"yt-dlp output không phải JSON hợp lệ: {exc}")
+
+    return {
+        "video_id": video_id,
+        "title": (data.get("title") or "").strip(),
+        "description": (data.get("description") or "").strip(),
+        "thumbnail": data.get("thumbnail") or "",
+        "channel": (data.get("channel") or data.get("uploader") or "").strip(),
+        "duration_sec": int(data.get("duration") or 0),
+        "categories": data.get("categories") or [],
+        "yt_tags": data.get("tags") or [],
+        "source_url": source_url,
+    }
+
+
 def fetch_playlist_video_ids(playlist_url: str) -> list[dict]:
     """Extract all video IDs and titles from a YouTube playlist using yt-dlp."""
     result = subprocess.run(

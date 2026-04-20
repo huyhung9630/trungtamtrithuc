@@ -8,9 +8,10 @@ Tính năng chính:
 
 1. **Nạp tài liệu** đa định dạng (PDF, DOCX, XLSX, TXT, MD) qua pipeline 3 tier.
 2. **Nạp video** (YouTube URL, YouTube Playlist, file MP4/MKV/AVI/MOV) — phiên âm + embed theo timestamp.
-3. **Hỏi đáp** với chuyên gia theo domain (BIM, MEP, kết cấu, marketing, pháp lý, sản xuất, hoặc tự do).
-4. **Gợi ý câu hỏi tiếp theo** tự động sau mỗi câu trả lời.
-5. **Session history** file-backed — nhớ hội thoại trong phiên để tiếp tục ngữ cảnh.
+3. **AI auto-metadata** khi upload: tự sinh `title`, `description`, `domain` (7 label cố định), `tags` — Haiku tool use + Pydantic schema, FE prefill form để user review.
+4. **Hỏi đáp** với chuyên gia theo domain (BIM, MEP, kết cấu, marketing, pháp lý, sản xuất, hoặc tự do).
+5. **Gợi ý câu hỏi tiếp theo** tự động sau mỗi câu trả lời.
+6. **Session history** file-backed — nhớ hội thoại trong phiên để tiếp tục ngữ cảnh.
 
 Bộ công nghệ lõi: **Claude Sonnet 4** (trả lời) + **Claude Haiku 4.5** (Vision + describe table), **Voyage AI** (`voyage-3`, 1024-dim) cho embedding, **Qdrant Cloud** làm vector store.
 
@@ -225,6 +226,69 @@ YouTube URL / Playlist URL / File MP4
 
 Playlist: lấy danh sách video → ingest tuần tự → trả về tổng hợp
 `total_videos / success_count / total_chunks`.
+
+---
+
+## AI Auto-Metadata (preview before ingest)
+
+Khi user upload, FE gọi endpoint **preview** để AI sinh metadata trước khi commit ingest. User review + sửa → submit endpoint chính với metadata đã duyệt.
+
+### 3 endpoint preview
+
+| Endpoint | Input | Cơ chế | Sinh field gì |
+|----------|-------|--------|---------------|
+| `POST /api/ingest/file/preview` | multipart file | Docling parse → lấy 5 trang đầu (~3000 token) → Haiku tool use | title, description, domain, tags |
+| `POST /api/ingest/video/file/preview` | multipart file video | `get_transcriber()` (Groq nếu có, fallback Whisper local) → ghép segment text → Haiku tool use | title, description, domain, tags |
+| `POST /api/ingest/youtube/preview?url=…` | query url | `yt-dlp --dump-single-json` (title/description/thumbnail/channel/duration) + transcript best-effort → Haiku chỉ classify domain/tags | title+description (từ YouTube) + domain+tags (từ AI) |
+
+**Playlist URL** → `/youtube/preview` trả `status=skip` (mỗi video playlist có metadata khác nhau, không gen cho cả list).
+
+### Structured output — Anthropic tool use + Pydantic
+
+`app/ingestion/metadata_generator.py::generate_document_metadata()` dùng **tool use** ép Claude gọi virtual tool `save_document_metadata` với JSON schema:
+
+```python
+{
+  "title":       {"type": "string", "minLength": 3, "maxLength": 200},
+  "description": {"type": "string", "minLength": 10, "maxLength": 500},
+  "domain":      {"type": "string", "enum": [
+                   "bim", "mep", "kết cấu", "marketing",
+                   "pháp lý", "sản xuất", "mặc định"]},
+  "tags":        {"type": "array", "items": {"type": "string"},
+                  "minItems": 0, "maxItems": 10}
+}
+```
+
+Domain là `Literal` enum trong Pydantic → LLM **không thể sinh label ngoài 7 giá trị** (constrained decoding ở API level). Tags được normalize sau (lowercase, dedup, strip punctuation, cap 8).
+
+### Filename & heading hint (doc)
+
+Trước khi gọi LLM, helper:
+
+- `_clean_filename_hint()` strip `Copy of`, `_v2`, `_final`, `_draft` → `"Báo cáo Q1"` thay vì `"Copy of Báo_cáo_Q1_final_v2.pdf"`
+- `_extract_first_heading()` bắt `# Heading` Markdown đầu tiên từ Docling output
+
+Cả hai gắn vào prompt dưới XML tag `<filename>` `<heading>` để hint cho LLM, không ép buộc.
+
+### UX frontend (web/ingest.html)
+
+- 2 loại badge: **✦ AI** (tím — source AI Haiku) và **▶ YT** (đỏ — source YouTube metadata)
+- Field AI-filled có class `ai-filled` (bg tím nhạt), YT-filled có `yt-filled` (bg hồng nhạt)
+- User chỉnh tay field nào → class + badge tự clear (→ user-confirmed)
+- Đổi file/URL → reset chỉ field AI-filled/YT-filled (giữ field user nhập tay)
+- Tab YouTube: hiển thị thumbnail + channel + duration dưới URL
+
+### Chi phí & latency
+
+| Tab | Input | LLM call | Chi phí | Latency user chờ |
+|-----|-------|----------|---------|------------------|
+| Doc | ~3000 token text | 1 Haiku | ~$0.004/file | ~2-5s |
+| Video | ~3000 token transcript | 1 Haiku (sau Whisper) | ~$0.005 + Whisper cost | Groq ~10s, Whisper local 30s-2 phút |
+| YouTube | title+desc+transcript | 1 Haiku (sau yt-dlp) | ~$0.004/URL | ~1-3s |
+
+### Respect user input
+
+Trong toàn bộ flow: field nào user **đã nhập tay** (không có class `ai-filled`/`yt-filled`) sẽ **không bị override** khi preview trả kết quả. Chỉ prefill field đang trống.
 
 ---
 

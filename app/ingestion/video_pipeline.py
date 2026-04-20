@@ -107,7 +107,16 @@ def _upsert_video_chunks(
         }
         if file_source == "youtube" and source_url:
             payload["youtube_url"] = f"https://www.youtube.com/watch?v={video_id}&t={int(start_sec)}s"
+        # Inject metadata top-level để filter/display đồng bộ với ttt_documents
         if metadata:
+            if metadata.get("domain"):
+                payload["domain"] = metadata["domain"]
+            if metadata.get("description"):
+                payload["description"] = metadata["description"]
+            if metadata.get("tags"):
+                payload["tags"] = metadata["tags"]
+            if metadata.get("url") and not payload.get("source_url"):
+                payload["source_url"] = metadata["url"]
             payload["extra_metadata"] = metadata
         points.append({"id": point_id, "vector": vector, "payload": payload})
 
@@ -136,10 +145,13 @@ def ingest_video_file(
     import hashlib
     video_id = hashlib.sha256(str(path).encode()).hexdigest()[:16]
 
+    # Ưu tiên title từ metadata (user sửa hoặc AI gen) → fallback filename
+    title = (metadata or {}).get("title") or original_name
+
     num_chunks = _upsert_video_chunks(
         segments=segments,
         video_id=video_id,
-        title=original_name,
+        title=title,
         source_url=None,
         file_source="local",
         metadata=metadata,
@@ -148,7 +160,7 @@ def ingest_video_file(
         doc_id=video_id,
         num_chunks=num_chunks,
         num_pages=1,
-        source_name=original_name,
+        source_name=title,
     )
 
 
@@ -172,10 +184,13 @@ def ingest_youtube(
         )
         data = fetch_youtube_via_whisper(url)
 
+    # Ưu tiên title từ metadata user-confirmed → fallback transcript/YouTube title
+    effective_title = (metadata or {}).get("title") or data["title"]
+
     num_chunks = _upsert_video_chunks(
         segments=data["segments"],
         video_id=data["video_id"],
-        title=data["title"],
+        title=effective_title,
         source_url=data["source_url"],
         file_source="youtube",
         metadata=metadata,
@@ -184,7 +199,7 @@ def ingest_youtube(
         doc_id=data["video_id"],
         num_chunks=num_chunks,
         num_pages=1,
-        source_name=data["title"] or url,
+        source_name=effective_title or url,
     )
 
 

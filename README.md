@@ -2,6 +2,8 @@
 
 Hệ thống hỏi đáp doanh nghiệp dựa trên RAG (Retrieval-Augmented Generation): nạp tài liệu (PDF/DOCX/XLSX/TXT/MD), video (MP4/YouTube/Playlist), trả lời tiếng Việt kèm trích dẫn nguồn và gợi ý câu hỏi tiếp theo.
 
+**AI Auto Metadata** — khi upload, hệ thống tự sinh `title`, `description`, `domain` (phân loại 7 lĩnh vực), `tags` từ nội dung. FE prefill form với badge ✦ AI / ▶ YT để user review trước khi commit.
+
 ## Kiến trúc tổng thể
 
 ```
@@ -182,9 +184,10 @@ trungtamtrithuc/
 │   ├── ingestion/
 │   │   ├── doc_parser.py       # 3-tier PDF parsing + typo fix
 │   │   ├── doc_pipeline.py     # Table detect/process + embed + store
+│   │   ├── metadata_generator.py # AI auto-gen metadata (Haiku + tool use, Pydantic schema)
 │   │   ├── video_pipeline.py   # Video ingest (YouTube + local + playlist)
 │   │   ├── video_transcriber.py# Whisper transcription
-│   │   └── youtube_fetcher.py  # YouTube transcript (with proxy rotation)
+│   │   └── youtube_fetcher.py  # YouTube transcript + full metadata (yt-dlp)
 │   └── rag/
 │       ├── chain.py            # Retrieve → rerank → generate → parse suggestions
 │       ├── retriever.py        # Multi-source parallel search
@@ -214,6 +217,30 @@ Base URL: `http://localhost:8000`
 ```json
 {"status": "ok"}
 ```
+
+### AI Auto-Metadata (preview before ingest)
+
+3 endpoint `POST .../preview` **không lưu Qdrant** — chỉ parse + gọi Haiku để sinh metadata (title, description, domain, tags). FE gọi preview khi user chọn file/dán URL → prefill form → user review → submit endpoint ingest chính.
+
+| Endpoint | Input | Sinh field gì | Thời gian |
+|----------|-------|---------------|-----------|
+| `POST /api/ingest/file/preview` | multipart file | tất cả 4 field từ nội dung doc | ~2-5s |
+| `POST /api/ingest/video/file/preview` | multipart file video | tất cả 4 field từ transcript Whisper | 30s-2 phút (tuỳ Groq/local) |
+| `POST /api/ingest/youtube/preview?url=…` | query `url` | `title/description` từ YouTube (yt-dlp), `domain/tags` từ AI | 1-3s |
+
+Response schema chung:
+```json
+{
+  "status": "ok" | "partial" | "error" | "skip",
+  "message": "...",
+  "metadata": {
+    "title": "...", "description": "...", "domain": "bim", "tags": ["...", "..."],
+    "thumbnail": "...", "channel": "...", "duration_sec": 1234    // chỉ YouTube
+  }
+}
+```
+
+Domain nằm trong enum cố định: `bim | mep | kết cấu | marketing | pháp lý | sản xuất | mặc định`. Anthropic tool use ép LLM không hallucinate label ngoài list.
 
 ### `POST /api/ingest/file` — Nạp tài liệu
 

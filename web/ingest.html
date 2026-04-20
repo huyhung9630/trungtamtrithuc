@@ -92,6 +92,63 @@
     .result-msg.err { color: var(--error); }
     .result-msg.pending { color: var(--gray-600); }
 
+    /* AI auto-fill */
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      margin-left: 0.4rem;
+      padding: 0.05rem 0.4rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #7c3aed;
+      background: #f3e8ff;
+      border-radius: 99px;
+      vertical-align: middle;
+    }
+    .ai-badge.yt { color: #dc2626; background: #fee2e2; }
+    .ai-badge.hidden { display: none; }
+    .form-input.ai-filled,
+    .form-select.ai-filled {
+      background: #faf5ff;
+      border-color: #c4b5fd;
+    }
+    .form-input.yt-filled,
+    .form-select.yt-filled {
+      background: #fef2f2;
+      border-color: #fca5a5;
+    }
+    .ai-status {
+      font-size: 0.72rem;
+      color: #7c3aed;
+      margin-top: 0.5rem;
+      text-align: center;
+      font-weight: 600;
+      min-height: 1rem;
+    }
+    .ai-status.loading::before { content: '✦ '; }
+    .ai-status.err { color: var(--error); }
+    .ai-status.ok { color: var(--success); }
+
+    .yt-thumb {
+      display: none;
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+    }
+    .yt-thumb.show { display: block; }
+    .yt-meta-row {
+      font-size: 0.72rem;
+      color: var(--gray-600);
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .yt-meta-row strong { color: var(--gray-800); }
+
     .section-title { font-size: 0.95rem; font-weight: 700; color: var(--gray-800); }
 
     /* Tabs */
@@ -142,14 +199,22 @@
           <div class="selected-file" id="docFileName"></div>
         </label>
 
+        <div class="ai-status" id="docAiStatus"></div>
+
         <div class="form-group">
-          <label class="form-label">Tiêu đề <span class="required">*</span></label>
+          <label class="form-label">
+            Tiêu đề <span class="required">*</span>
+            <span class="ai-badge hidden" data-badge-for="docTitle">✦ AI</span>
+          </label>
           <input class="form-input" type="text" id="docTitle" placeholder="Nhập tiêu đề tài liệu" />
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Lĩnh vực</label>
+            <label class="form-label">
+              Lĩnh vực
+              <span class="ai-badge hidden" data-badge-for="docDomain">✦ AI</span>
+            </label>
             <select class="form-select" id="docDomain">
               <option value="">Chọn lĩnh vực</option>
               <option value="bim">BIM</option>
@@ -158,6 +223,7 @@
               <option value="marketing">Marketing</option>
               <option value="pháp lý">Pháp lý</option>
               <option value="sản xuất">Sản xuất</option>
+              <option value="mặc định">Mặc định (chung)</option>
             </select>
           </div>
           <div class="form-group">
@@ -173,12 +239,18 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Mô tả</label>
+          <label class="form-label">
+            Mô tả
+            <span class="ai-badge hidden" data-badge-for="docDesc">✦ AI</span>
+          </label>
           <textarea class="form-input" id="docDesc" placeholder="Mô tả ngắn gọn về nội dung này"></textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Thẻ</label>
+          <label class="form-label">
+            Thẻ
+            <span class="ai-badge hidden" data-badge-for="docTags">✦ AI</span>
+          </label>
           <input class="form-input" type="text" id="docTags" placeholder="Nhập thẻ phân cách bằng dấu phẩy (ví dụ: marketing, chiến dịch, Q2)" />
         </div>
 
@@ -203,13 +275,21 @@
           <div class="selected-file" id="vidFileName"></div>
         </label>
 
+        <div class="ai-status" id="vidAiStatus"></div>
+
         <div class="form-group">
-          <label class="form-label">Tiêu đề</label>
+          <label class="form-label">
+            Tiêu đề
+            <span class="ai-badge hidden" data-badge-for="vidTitle">✦ AI</span>
+          </label>
           <input class="form-input" type="text" id="vidTitle" placeholder="Tên video" />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Lĩnh vực</label>
+          <label class="form-label">
+            Lĩnh vực
+            <span class="ai-badge hidden" data-badge-for="vidDomain">✦ AI</span>
+          </label>
           <select class="form-select" id="vidDomain">
             <option value="">Chọn lĩnh vực</option>
             <option value="bim">BIM</option>
@@ -218,7 +298,24 @@
             <option value="marketing">Marketing</option>
             <option value="pháp lý">Pháp lý</option>
             <option value="sản xuất">Sản xuất</option>
+            <option value="mặc định">Mặc định (chung)</option>
           </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Mô tả
+            <span class="ai-badge hidden" data-badge-for="vidDesc">✦ AI</span>
+          </label>
+          <textarea class="form-input" id="vidDesc" placeholder="Mô tả nội dung video"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Thẻ
+            <span class="ai-badge hidden" data-badge-for="vidTags">✦ AI</span>
+          </label>
+          <input class="form-input" type="text" id="vidTags" placeholder="Phân cách bằng dấu phẩy" />
         </div>
 
         <div class="result-msg" id="vidResult"></div>
@@ -232,11 +329,26 @@
         <div class="form-group">
           <label class="form-label">URL YouTube <span class="required">*</span></label>
           <input class="form-input" type="url" id="ytUrl" placeholder="https://www.youtube.com/watch?v=... hoặc playlist?list=..." />
-          <div class="dropzone-hint" style="margin-top:0.35rem">Hỗ trợ video đơn và playlist. Playlist sẽ tự động nạp từng video.</div>
+          <div class="dropzone-hint" style="margin-top:0.35rem">Hỗ trợ video đơn và playlist. Playlist sẽ tự động nạp từng video (không gen metadata chung).</div>
+        </div>
+
+        <img class="yt-thumb" id="ytThumb" alt="Thumbnail" />
+        <div class="yt-meta-row" id="ytMetaRow"></div>
+        <div class="ai-status" id="ytAiStatus"></div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Tiêu đề
+            <span class="ai-badge yt hidden" data-badge-for="ytTitle">▶ YT</span>
+          </label>
+          <input class="form-input" type="text" id="ytTitle" placeholder="Tên video (sẽ lấy từ YouTube)" />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Lĩnh vực</label>
+          <label class="form-label">
+            Lĩnh vực
+            <span class="ai-badge hidden" data-badge-for="ytDomain">✦ AI</span>
+          </label>
           <select class="form-select" id="ytDomain">
             <option value="">Chọn lĩnh vực</option>
             <option value="bim">BIM</option>
@@ -245,7 +357,24 @@
             <option value="marketing">Marketing</option>
             <option value="pháp lý">Pháp lý</option>
             <option value="sản xuất">Sản xuất</option>
+            <option value="mặc định">Mặc định (chung)</option>
           </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Mô tả
+            <span class="ai-badge yt hidden" data-badge-for="ytDesc">▶ YT</span>
+          </label>
+          <textarea class="form-input" id="ytDesc" placeholder="Mô tả (sẽ lấy từ YouTube)"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Thẻ
+            <span class="ai-badge hidden" data-badge-for="ytTags">✦ AI</span>
+          </label>
+          <input class="form-input" type="text" id="ytTags" placeholder="Phân cách bằng dấu phẩy" />
         </div>
 
         <div class="result-msg" id="ytResult"></div>
@@ -268,31 +397,237 @@
     });
 
     // --- Dropzone ---
-    function setupDropzone(zoneId, inputId, nameId, submitId) {
+    function setupDropzone(zoneId, inputId, nameId, submitId, onFile) {
       const zone = document.getElementById(zoneId);
       const inp = document.getElementById(inputId);
       const nameEl = document.getElementById(nameId);
       const btn = document.getElementById(submitId);
+
+      function handleFile(file) {
+        nameEl.textContent = file.name;
+        btn.disabled = false;
+        if (onFile) onFile(file);
+      }
+
       zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
       zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
       zone.addEventListener('drop', e => {
         e.preventDefault(); zone.classList.remove('dragover');
-        if (e.dataTransfer.files[0]) { inp.files = e.dataTransfer.files; nameEl.textContent = e.dataTransfer.files[0].name; btn.disabled = false; }
+        if (e.dataTransfer.files[0]) {
+          inp.files = e.dataTransfer.files;
+          handleFile(e.dataTransfer.files[0]);
+        }
       });
       inp.addEventListener('change', () => {
-        if (inp.files[0]) {
-          nameEl.textContent = inp.files[0].name;
-          btn.disabled = false;
-          // Auto-fill title if empty
-          const titleInput = document.getElementById(zoneId === 'docDropzone' ? 'docTitle' : 'vidTitle');
-          if (titleInput && !titleInput.value) {
-            titleInput.value = inp.files[0].name.replace(/\.[^.]+$/, '');
-          }
+        if (inp.files[0]) handleFile(inp.files[0]);
+      });
+    }
+
+    // --- AI auto-fill helpers (generic cho doc / video / youtube) ---
+
+    /** Cấu hình per-tab: prefix, list ID field, status ID, class source (ai vs yt). */
+    const TAB_CFG = {
+      doc:   { fields: ['docTitle', 'docDomain', 'docDesc', 'docTags'],           status: 'docAiStatus', aiClass: 'ai-filled', ytClass: null },
+      video: { fields: ['vidTitle', 'vidDomain', 'vidDesc', 'vidTags'],           status: 'vidAiStatus', aiClass: 'ai-filled', ytClass: null },
+      yt:    { fields: ['ytTitle',  'ytDomain',  'ytDesc',  'ytTags'],            status: 'ytAiStatus',  aiClass: 'ai-filled', ytClass: 'yt-filled' },
+    };
+    const ALL_AI_FIELDS = Object.values(TAB_CFG).flatMap(c => c.fields);
+    const ALL_MARK_CLASSES = ['ai-filled', 'yt-filled'];
+
+    /** Set value + đánh dấu source ("ai" | "yt"). Respect user-nhập (không ghi đè). */
+    function setMarkedField(id, value, source = 'ai') {
+      const el = document.getElementById(id);
+      if (!el || !value || String(value).length === 0) return false;
+      if (el.value && el.value.trim()) return false;
+      el.value = value;
+      el.classList.add(source === 'yt' ? 'yt-filled' : 'ai-filled');
+      const badge = document.querySelector(`.ai-badge[data-badge-for="${id}"]`);
+      if (badge) badge.classList.remove('hidden');
+      return true;
+    }
+
+    function clearMark(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      ALL_MARK_CLASSES.forEach(c => el.classList.remove(c));
+      const badge = document.querySelector(`.ai-badge[data-badge-for="${id}"]`);
+      if (badge) badge.classList.add('hidden');
+    }
+
+    // Khi user chỉnh tay → mất badge (thành user-confirmed)
+    ALL_AI_FIELDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => clearMark(id));
+      el.addEventListener('change', () => clearMark(id));
+    });
+
+    /** Reset cho 1 tab: clear value các field đang đánh dấu, bỏ status. Giữ field user nhập tay. */
+    function resetTabState(tab) {
+      const cfg = TAB_CFG[tab];
+      if (!cfg) return;
+      cfg.fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && ALL_MARK_CLASSES.some(c => el.classList.contains(c))) {
+          el.value = '';
+        }
+        clearMark(id);
+      });
+      const s = document.getElementById(cfg.status);
+      if (s) { s.className = 'ai-status'; s.textContent = ''; }
+      if (tab === 'yt') {
+        const t = document.getElementById('ytThumb'); if (t) { t.classList.remove('show'); t.src = ''; }
+        const r = document.getElementById('ytMetaRow'); if (r) r.innerHTML = '';
+      }
+    }
+
+    function setStatus(tab, text, cls = '') {
+      const cfg = TAB_CFG[tab];
+      if (!cfg) return;
+      const s = document.getElementById(cfg.status);
+      if (!s) return;
+      s.className = 'ai-status' + (cls ? ' ' + cls : '');
+      s.textContent = text;
+    }
+
+    // --- DOC preview ---
+    async function runDocPreview(file) {
+      setStatus('doc', 'Đang phân tích tài liệu để gợi ý mô tả', 'loading');
+      const fd = new FormData();
+      fd.append('file', file);
+      try {
+        const resp = await fetch(`${API_BASE}/api/ingest/file/preview`, { method: 'POST', body: fd });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (data.status !== 'ok' || !data.metadata) {
+          setStatus('doc', data.message || 'Không gen được metadata, vui lòng nhập thủ công.', 'err');
+          const t = document.getElementById('docTitle');
+          if (t && !t.value) t.value = file.name.replace(/\.[^.]+$/, '');
+          return;
+        }
+        const m = data.metadata;
+        const filled = [];
+        if (setMarkedField('docTitle', m.title, 'ai')) filled.push('Tiêu đề');
+        if (setMarkedField('docDomain', m.domain, 'ai')) filled.push('Lĩnh vực');
+        if (setMarkedField('docDesc', m.description, 'ai')) filled.push('Mô tả');
+        if (Array.isArray(m.tags) && m.tags.length && setMarkedField('docTags', m.tags.join(', '), 'ai')) filled.push('Thẻ');
+        setStatus('doc', filled.length
+          ? `✓ Đã gợi ý: ${filled.join(', ')}. Bạn có thể sửa trước khi tải lên.`
+          : '✓ Metadata sẵn sàng (các field đã được bạn nhập, không ghi đè).', 'ok');
+      } catch (err) {
+        setStatus('doc', `Lỗi gen metadata: ${err.message}. Vui lòng nhập thủ công.`, 'err');
+        const t = document.getElementById('docTitle');
+        if (t && !t.value) t.value = file.name.replace(/\.[^.]+$/, '');
+      }
+    }
+
+    // --- VIDEO preview ---
+    async function runVideoPreview(file) {
+      setStatus('video', 'Đang phiên âm video và phân tích, có thể mất 30s-2 phút…', 'loading');
+      const fd = new FormData();
+      fd.append('file', file);
+      try {
+        const resp = await fetch(`${API_BASE}/api/ingest/video/file/preview`, { method: 'POST', body: fd });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (data.status !== 'ok' || !data.metadata) {
+          setStatus('video', data.message || 'Không gen được metadata, vui lòng nhập thủ công.', 'err');
+          const t = document.getElementById('vidTitle');
+          if (t && !t.value) t.value = file.name.replace(/\.[^.]+$/, '');
+          return;
+        }
+        const m = data.metadata;
+        const filled = [];
+        if (setMarkedField('vidTitle', m.title, 'ai')) filled.push('Tiêu đề');
+        if (setMarkedField('vidDomain', m.domain, 'ai')) filled.push('Lĩnh vực');
+        if (setMarkedField('vidDesc', m.description, 'ai')) filled.push('Mô tả');
+        if (Array.isArray(m.tags) && m.tags.length && setMarkedField('vidTags', m.tags.join(', '), 'ai')) filled.push('Thẻ');
+        setStatus('video', filled.length
+          ? `✓ Đã gợi ý từ transcript: ${filled.join(', ')}.`
+          : '✓ Metadata sẵn sàng (các field đã được bạn nhập, không ghi đè).', 'ok');
+      } catch (err) {
+        setStatus('video', `Lỗi: ${err.message}. Vui lòng nhập thủ công.`, 'err');
+        const t = document.getElementById('vidTitle');
+        if (t && !t.value) t.value = file.name.replace(/\.[^.]+$/, '');
+      }
+    }
+
+    // --- YOUTUBE preview (URL blur → fetch metadata + AI classify) ---
+    function _formatDuration(sec) {
+      sec = parseInt(sec || 0);
+      if (!sec) return '';
+      const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+      return h ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+    }
+    let _ytLastPreviewUrl = '';
+    async function runYoutubePreview(url) {
+      if (!url || url === _ytLastPreviewUrl) return;
+      _ytLastPreviewUrl = url;
+      setStatus('yt', 'Đang lấy thông tin YouTube và phân loại lĩnh vực…', 'loading');
+      try {
+        const resp = await fetch(`${API_BASE}/api/ingest/youtube/preview?url=${encodeURIComponent(url)}`, { method: 'POST' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (data.status === 'skip') {
+          setStatus('yt', data.message, 'ok');
+          return;
+        }
+        if (data.status !== 'ok' || !data.metadata) {
+          setStatus('yt', data.message || 'Không lấy được metadata.', 'err');
+          return;
+        }
+        const m = data.metadata;
+        // Thumbnail + meta row
+        if (m.thumbnail) {
+          const img = document.getElementById('ytThumb');
+          img.src = m.thumbnail; img.classList.add('show');
+        }
+        const mr = document.getElementById('ytMetaRow');
+        if (mr) {
+          const bits = [];
+          if (m.channel)       bits.push(`<span><strong>Kênh:</strong> ${m.channel}</span>`);
+          if (m.duration_sec)  bits.push(`<span><strong>Thời lượng:</strong> ${_formatDuration(m.duration_sec)}</span>`);
+          mr.innerHTML = bits.join('');
+        }
+        const filled = [];
+        if (setMarkedField('ytTitle', m.title, 'yt')) filled.push('Tiêu đề (YouTube)');
+        if (setMarkedField('ytDesc', m.description, 'yt')) filled.push('Mô tả (YouTube)');
+        if (setMarkedField('ytDomain', m.domain, 'ai')) filled.push('Lĩnh vực (AI)');
+        if (Array.isArray(m.tags) && m.tags.length && setMarkedField('ytTags', m.tags.join(', '), 'ai')) filled.push('Thẻ (AI)');
+        setStatus('yt', filled.length
+          ? `✓ Đã gợi ý: ${filled.join(', ')}.`
+          : '✓ Metadata sẵn sàng (các field đã được bạn nhập, không ghi đè).', 'ok');
+      } catch (err) {
+        setStatus('yt', `Lỗi: ${err.message}`, 'err');
+      }
+    }
+
+    // --- Wire dropzones ---
+
+    // Doc: auto-preview metadata via AI sau khi chọn file
+    setupDropzone('docDropzone', 'docFile', 'docFileName', 'docSubmit', file => {
+      resetTabState('doc');
+      runDocPreview(file);
+    });
+
+    // Video: Whisper transcribe + AI gen metadata
+    setupDropzone('vidDropzone', 'vidFile', 'vidFileName', 'vidSubmit', file => {
+      resetTabState('video');
+      runVideoPreview(file);
+    });
+
+    // YouTube: URL blur → preview
+    const ytUrlEl = document.getElementById('ytUrl');
+    if (ytUrlEl) {
+      ytUrlEl.addEventListener('blur', () => {
+        const u = ytUrlEl.value.trim();
+        if (!u) { resetTabState('yt'); _ytLastPreviewUrl = ''; return; }
+        if (u !== _ytLastPreviewUrl) {
+          resetTabState('yt');
+          runYoutubePreview(u);
         }
       });
     }
-    setupDropzone('docDropzone', 'docFile', 'docFileName', 'docSubmit');
-    setupDropzone('vidDropzone', 'vidFile', 'vidFileName', 'vidSubmit');
 
     function setResult(id, text, type) {
       const el = document.getElementById(id);
@@ -340,6 +675,10 @@
       const fd = new FormData();
       fd.append('file', file);
       fd.append('collection', 'ttt_videos');
+      fd.append('title', document.getElementById('vidTitle').value);
+      fd.append('domain', document.getElementById('vidDomain').value);
+      fd.append('description', document.getElementById('vidDesc').value);
+      fd.append('tags', document.getElementById('vidTags').value);
 
       try {
         const resp = await fetch(`${API_BASE}/api/ingest/video/file`, { method: 'POST', body: fd });
@@ -360,12 +699,26 @@
       const btn = document.getElementById('ytSubmit');
       btn.disabled = true;
       setResult('ytResult', 'Đang xử lý...', 'pending');
+
+      const fd = new FormData();
+      fd.append('title', document.getElementById('ytTitle').value);
+      fd.append('domain', document.getElementById('ytDomain').value);
+      fd.append('description', document.getElementById('ytDesc').value);
+      fd.append('tags', document.getElementById('ytTags').value);
+
       try {
-        const resp = await fetch(`${API_BASE}/api/ingest/youtube?url=${encodeURIComponent(url)}`, { method: 'POST' });
+        const resp = await fetch(
+          `${API_BASE}/api/ingest/youtube?url=${encodeURIComponent(url)}`,
+          { method: 'POST', body: fd },
+        );
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
         setResult('ytResult', data.message, data.status === 'ok' ? 'ok' : 'err');
-        if (data.status === 'ok') document.getElementById('ytUrl').value = '';
+        if (data.status === 'ok') {
+          document.getElementById('ytUrl').value = '';
+          resetTabState('yt');
+          _ytLastPreviewUrl = '';
+        }
       } catch (err) {
         setResult('ytResult', `Lỗi: ${err.message}`, 'err');
       } finally {
