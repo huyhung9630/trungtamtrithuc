@@ -101,7 +101,8 @@
     }
     .session-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.2rem; }
     .session-item {
-      padding: 0.45rem 0.75rem;
+      position: relative;
+      padding: 0.45rem 1.8rem 0.45rem 0.75rem;
       border-radius: 6px;
       font-size: 0.8rem;
       color: var(--gray-600);
@@ -113,6 +114,46 @@
     }
     .session-item:hover { background: var(--gray-100); }
     .session-item.active { background: #eff6ff; color: var(--accent); font-weight: 600; }
+    .session-del {
+      position: absolute;
+      right: 0.35rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px; height: 20px;
+      border: none;
+      background: transparent;
+      color: var(--gray-400);
+      border-radius: 4px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      line-height: 1;
+      padding: 0;
+    }
+    .session-item:hover .session-del,
+    .session-item.active .session-del { display: flex; }
+    .session-del:hover { background: #fee2e2; color: #b91c1c; }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .btn-clear-all {
+      border: none;
+      background: transparent;
+      color: var(--gray-400);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .btn-clear-all:hover { background: #fee2e2; color: #b91c1c; }
 
     /* Chat main */
     .chat-main {
@@ -315,7 +356,10 @@
         <option value="pháp lý">Pháp lý</option>
         <option value="sản xuất">Sản xuất</option>
       </select>
-      <div class="sidebar-label">Lịch sử</div>
+      <div class="sidebar-header">
+        <div class="sidebar-label">Lịch sử</div>
+        <button class="btn-clear-all" id="clearAllBtn" title="Xoá toàn bộ hội thoại của user hiện tại">Xoá tất cả</button>
+      </div>
       <div class="session-list" id="sessionList"></div>
     </aside>
 
@@ -360,11 +404,85 @@
       [...sessions].reverse().forEach(s => {
         const el = document.createElement('div');
         el.className = 'session-item' + (s.id === currentSessionId ? ' active' : '');
-        el.textContent = s.title || 'Cuộc hội thoại';
         el.title = s.title || '';
         el.addEventListener('click', () => loadSession(s.id));
+
+        const label = document.createElement('span');
+        label.textContent = s.title || 'Cuộc hội thoại';
+        el.appendChild(label);
+
+        const del = document.createElement('button');
+        del.className = 'session-del';
+        del.type = 'button';
+        del.title = 'Xoá hội thoại này';
+        del.textContent = '✕';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteSession(s.id, s.title);
+        });
+        el.appendChild(del);
+
         list.appendChild(el);
       });
+    }
+
+    async function deleteSession(sessionId, title) {
+      const label = title ? `"${title.slice(0, 40)}"` : 'hội thoại này';
+      if (!confirm(`Xoá ${label}? Thao tác này không thể hoàn tác.`)) return;
+
+      // Xoá local trước để UI phản hồi ngay
+      sessions = sessions.filter(s => s.id !== sessionId);
+      localStorage.setItem(sessionKey(currentUserId), JSON.stringify(sessions));
+
+      // Nếu đang ở session vừa xoá → tạo session mới
+      if (sessionId === currentSessionId) {
+        currentSessionId = crypto.randomUUID();
+        localStorage.setItem(currentSessionKey(currentUserId), currentSessionId);
+        showEmpty();
+      }
+      renderSessionList();
+
+      // Gọi backend xoá pair trong Qdrant + file JSON (best-effort, không block UI)
+      try {
+        await fetch(`${API_BASE}/api/chat/memory/session/${encodeURIComponent(sessionId)}`, {
+          method: 'DELETE',
+        });
+      } catch (err) {
+        console.warn('Backend delete session failed:', err);
+      }
+    }
+
+    async function deleteAllSessions() {
+      if (!sessions.length) {
+        alert('Chưa có hội thoại nào để xoá.');
+        return;
+      }
+      if (!confirm(`Xoá toàn bộ ${sessions.length} hội thoại của user ${currentUserId}? Thao tác này không thể hoàn tác.`)) return;
+
+      const ids = sessions.map(s => s.id);
+
+      // Reset local
+      sessions = [];
+      localStorage.setItem(sessionKey(currentUserId), '[]');
+      currentSessionId = crypto.randomUUID();
+      localStorage.setItem(currentSessionKey(currentUserId), currentSessionId);
+      showEmpty();
+      renderSessionList();
+
+      // Xoá toàn bộ memory user trên backend (1 call gọn hơn là delete từng session)
+      try {
+        await fetch(`${API_BASE}/api/chat/memory/user/${encodeURIComponent(currentUserId)}`, {
+          method: 'DELETE',
+        });
+        // Vẫn xoá từng session file JSON (endpoint user chỉ xoá Qdrant)
+        await Promise.all(ids.map(id =>
+          fetch(`${API_BASE}/api/chat/memory/session/${encodeURIComponent(id)}`, {
+            method: 'DELETE',
+          }).catch(() => {})
+        ));
+      } catch (err) {
+        console.warn('Backend clear-all failed:', err);
+      }
     }
 
     function loadSession(id) {
@@ -580,6 +698,8 @@
       showEmpty();
       renderSessionList();
     });
+
+    document.getElementById('clearAllBtn').addEventListener('click', deleteAllSessions);
 
     userSelect.addEventListener('change', () => {
       currentUserId = userSelect.value;
