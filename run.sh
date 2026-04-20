@@ -21,5 +21,10 @@ fi
 HOST="${API_HOST:-0.0.0.0}"
 PORT="${API_PORT:-8000}"
 
-echo "Khởi động Trung Tâm Tri Thức tại http://${HOST}:${PORT}/"
+DISPLAY_HOST=$HOST
+if [ "$DISPLAY_HOST" = "0.0.0.0" ]; then
+    DISPLAY_HOST="localhost"
+fi
+
+echo "Khởi động Trung Tâm Tri Thức tại http://${DISPLAY_HOST}:${PORT}/"
 exec uvicorn app.main:app --host "$HOST" --port "$PORT" --reload
